@@ -3,7 +3,7 @@
   <id>io.github.pieterdd.RcloneShuttle</id>
   
   <name>Rclone Shuttle</name>
-  <summary>Cloud storage browser</summary>
+  <summary>Upload your files to anywhere</summary>
   <developer id="io.github.pieterdd">
     <name>pieterdd</name>
   </developer>
@@ -18,15 +18,29 @@
     <color type="primary" scheme_preference="dark">#0f0501</color>
   </branding>
   
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/bf16947c9866c5d95880278c8585201514c2be64/meta/screenshot.png</image>
+      <caption>Main window</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/bf16947c9866c5d95880278c8585201514c2be64/meta/screenshot-locked.png</image>
+      <caption>Lock screen</caption>
+    </screenshot>
+  </screenshots>
+  
+  <url type="homepage">https://github.com/pieterdd/RcloneShuttle</url>
+  
   <description>
     <p>
       Access all your cloud storage providers from one app. Powered by Rclone's superb command line tool, Rclone Shuttle lets you browse your files wherever they are hosted.
     </p>
-    <p>You can:</p>
+    <p>Rclone Shuttle can:</p>
     <ul>
       <li>Upload files via drag and drop</li>
       <li>Move, copy and delete files/folders</li>
       <li>Open remote files locally via double click</li>
+      <li>Handle encrypted Rclone configuration files</li>
     </ul>
     <p>
       Rclone supports a variety of providers and protocols including:
