@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Rclone Shuttle
+Exec=rclone-shuttle
+Type=Application
+Comment=Browse your Rclone remotes
+Icon=io.github.pieterdd.RcloneShuttle

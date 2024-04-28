@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.pieterdd.RcloneShuttle</id>
+  
+  <name>Rclone Shuttle</name>
+  <summary>Cloud storage browser</summary>
+  <developer id="io.github.pieterdd">
+    <name>pieterdd</name>
+  </developer>
+  
+  <metadata_license>MIT</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  
+  <content_rating type="oars-1.1" />
+  
+  <branding>
+    <color type="primary" scheme_preference="light">#fff4e9</color>
+    <color type="primary" scheme_preference="dark">#0f0501</color>
+  </branding>
+  
+  <description>
+    <p>
+      Access all your cloud storage providers from one app. Powered by Rclone's superb command line tool, Rclone Shuttle lets you browse your files wherever they are hosted.
+    </p>
+    <p>You can:</p>
+    <ul>
+      <li>Upload files via drag and drop</li>
+      <li>Move, copy and delete files/folders</li>
+      <li>Open remote files locally via double click</li>
+    </ul>
+    <p>
+      Rclone supports a variety of providers and protocols including:
+    </p>
+    <ul>
+      <li>Amazon S3</li>
+      <li>Dropbox</li>
+      <li>FTP</li>
+      <li>Google Cloud Storage</li>
+      <li>Google Drive</li>
+      <li>Google Photos</li>
+      <li>OneDrive</li>
+      <li>Proton Drive</li>
+      <li>SFTP</li>
+      <li>SMB (Samba)</li>
+      <li>WebDAV (works with Nextcloud)</li>
+    </ul>
+    <p>
+      If you are looking for a more feature-complete alternative, check out Rclone Browser. Please be aware that Rclone does not warn before overwriting files.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">io.github.pieterdd.RcloneShuttle.desktop</launchable>
+</component>

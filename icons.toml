@@ -1,0 +1,18 @@
+icons = [
+    "left-large",
+    "right-large",
+    "up-large",
+    "arrow-circular-top-right",
+    "warning-outline",
+    "plus",
+    "arrow-turn-up-right",
+    "copy",
+    "cross-small",
+    "folder-filled",
+    "paper-filled",
+    "check-round-outline",
+    "error-outline",
+    "padlock2",
+    "menu",
+    "info-outline",
+]
