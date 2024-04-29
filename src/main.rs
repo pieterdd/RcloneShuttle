@@ -15,6 +15,7 @@ use adw::prelude::{ButtonExt, EditableExt};
 use client::{RcloneClient, RcloneFileListing};
 use components::queue_view::QueueView;
 use components::string_prompt_popover::StringPromptPopover;
+use config::AppConfig;
 use dirs::cache_dir;
 use globals::JOBS;
 use model::{RcloneJob, RcloneJobType};
@@ -42,6 +43,7 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
 
+mod config;
 mod client;
 mod components;
 mod globals;
@@ -653,6 +655,28 @@ impl Component for App {
                 // preselected properly in the GUI
                 self.client = Some(client);
                 self.refresh_remotes(&sender);
+                
+                let mut config = AppConfig::load();
+                
+                if !config.skip_overwrite_disclaimer {
+                    let dialog = gtk::AlertDialog::builder()
+                        .buttons(["OK", "Don't show again"])
+                        .message("Just so you know")
+                        .detail("Rclone does not warn before overwriting files. If you upload, move or
+                        copy a file over another, Rclone will replace it without confirmation.")
+                        .default_button(0)
+                        .build();
+
+                    dialog.choose(Some(root), Some(&Cancellable::default()), move |selection| {
+                        match selection {
+                            Ok(1) => {
+                                config.skip_overwrite_disclaimer = true;
+                                config.save();
+                            },
+                            _ => {},
+                        }
+                    });
+                }
             }
             Self::Input::RemotesRefreshRequested => {
                 self.refresh_remotes(&sender);

@@ -59,7 +59,7 @@
       <li>WebDAV (works with Nextcloud)</li>
     </ul>
     <p>
-      If you are looking for a more feature-complete alternative, check out Rclone Browser. Please be aware that Rclone does not warn before overwriting files.
+      If you are looking for a more feature-complete alternative, check out Rclone Browser.
     </p>
   </description>
   

@@ -22,3 +22,4 @@ uuid = { version = "1.7.0", features = ["v4"] }
 dirs = "5.0.1"
 open = "5.1.2"
 size_format = "1.0.2"
+confy = "0.6.1"
