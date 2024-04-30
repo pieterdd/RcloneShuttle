@@ -223,6 +223,19 @@
     {
         "type": "archive",
         "archive-type": "tar-gzip",
+        "url": "https://static.crates.io/crates/confy/confy-0.6.1.crate",
+        "sha256": "45b1f4c00870f07dc34adcac82bb6a72cc5aabca8536ba1797e01df51d2ce9a0",
+        "dest": "cargo/vendor/confy-0.6.1"
+    },
+    {
+        "type": "inline",
+        "contents": "{\"package\": \"45b1f4c00870f07dc34adcac82bb6a72cc5aabca8536ba1797e01df51d2ce9a0\", \"files\": {}}",
+        "dest": "cargo/vendor/confy-0.6.1",
+        "dest-filename": ".cargo-checksum.json"
+    },
+    {
+        "type": "archive",
+        "archive-type": "tar-gzip",
         "url": "https://static.crates.io/crates/core-foundation-sys/core-foundation-sys-0.8.6.crate",
         "sha256": "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f",
         "dest": "cargo/vendor/core-foundation-sys-0.8.6"
@@ -283,6 +296,19 @@
         "type": "inline",
         "contents": "{\"package\": \"b42b6fa04a440b495c8b04d0e71b707c585f83cb9cb28cf8cd0d976c315e31b4\", \"files\": {}}",
         "dest": "cargo/vendor/deranged-0.3.11",
+        "dest-filename": ".cargo-checksum.json"
+    },
+    {
+        "type": "archive",
+        "archive-type": "tar-gzip",
+        "url": "https://static.crates.io/crates/directories/directories-5.0.1.crate",
+        "sha256": "9a49173b84e034382284f27f1af4dcbbd231ffa358c0fe316541a7337f376a35",
+        "dest": "cargo/vendor/directories-5.0.1"
+    },
+    {
+        "type": "inline",
+        "contents": "{\"package\": \"9a49173b84e034382284f27f1af4dcbbd231ffa358c0fe316541a7337f376a35\", \"files\": {}}",
+        "dest": "cargo/vendor/directories-5.0.1",
         "dest-filename": ".cargo-checksum.json"
     },
     {
