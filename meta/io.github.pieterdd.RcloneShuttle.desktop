@@ -1,6 +1,9 @@
 [Desktop Entry]
 Name=Rclone Shuttle
 Exec=rclone-shuttle
+Terminal=false
 Type=Application
 Comment=Browse your Rclone remotes
+Categories=GNOME;GTK;Network;
+Keywords=Gnome;GTK;
 Icon=io.github.pieterdd.RcloneShuttle

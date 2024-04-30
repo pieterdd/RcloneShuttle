@@ -63,5 +63,13 @@
     </p>
   </description>
   
+  <releases>
+    <release version="0.1.0" date="2024-04-30">
+      <description>
+        <p>Initial release with upload, move, copy and delete functionality.</p>
+      </description>
+    </release>
+  </releases>
+
   <launchable type="desktop-id">io.github.pieterdd.RcloneShuttle.desktop</launchable>
 </component>
