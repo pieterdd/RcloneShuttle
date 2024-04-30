@@ -662,8 +662,7 @@ impl Component for App {
                     let dialog = gtk::AlertDialog::builder()
                         .buttons(["OK", "Don't show again"])
                         .message("Just so you know")
-                        .detail("Rclone does not warn before overwriting files. If you upload, move or
-                        copy a file over another, Rclone will replace it without confirmation.")
+                        .detail("Rclone does not warn before overwriting files. If you upload, move or copy a file over another, Rclone will replace it without confirmation.")
                         .default_button(0)
                         .build();
 
