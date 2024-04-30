@@ -5,6 +5,7 @@ edition = "2021"
 exclude = [
     ".flatpak-builder",
     "flatpak-build",
+    "repo",
     "meta",
 ]
 
