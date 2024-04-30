@@ -22,8 +22,8 @@ modules:
   - name: rust-flatpak
     buildsystem: simple
     build-commands:
-    - /usr/lib/sdk/rust-stable/bin/cargo --offline fetch --manifest-path Cargo.toml --verbose
-    - /usr/lib/sdk/rust-stable/bin/cargo --offline build --release --verbose
+    - cargo --offline fetch --manifest-path Cargo.toml --verbose
+    - cargo --offline build --release --verbose
     - mkdir -p /app/bin
     - install -Dm755 ./target/release/rclone-shuttle /app/bin/rclone-shuttle
     - ln -s /run/host/usr/bin/rclone /app/bin/rclone
