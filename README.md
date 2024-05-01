@@ -1,4 +1,4 @@
-![Rclone Shuttle logo](meta/logo-with-text.png)
+<div align="center"><img src="meta/logo-with-text.png" alt="Rclone Shuttle logo"/></div><br />
 
 GTK4 frontend for Rclone to upload files to [any supported](https://rclone.org/overview/) cloud storage provider or storage protocol.
 
