@@ -8,6 +8,19 @@ exclude = [
     "repo",
     "meta",
 ]
+description = "Upload your files to anywhere"
+license = "GPL-3.0-or-later"
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/rclone-shuttle", dest = "/usr/bin/rclone-shuttle", mode = "0755" },
+    { source = "meta/io.github.pieterdd.RcloneShuttle.desktop", dest = "/usr/share/applications/", mode = "0644" },
+    { source = "meta/io.github.pieterdd.RcloneShuttle.png", dest = "/usr/share/icons/hicolor/512x512/apps/", mode = "0644" },
+]
+
+[package.metadata.generate-rpm.requires]
+gtk4 = ">= 4.14.3"
+rclone = ">= 1.64.2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
