@@ -1,4 +1,4 @@
-# Rclone Shuttle
+![Rclone Shuttle logo](meta/logo-with-text.png)
 
 GTK4 frontend for Rclone to upload files to [any supported](https://rclone.org/overview/) cloud storage provider or storage protocol.
 
@@ -27,6 +27,8 @@ Some of Rclone's supported cloud storage providers and protocols:
 
 ## Install
 
-We currently don't offer binaries.
+### Linux
+We'd like to cover a variety of distros and architectures with one distribution mechanism, so we're submitting to Flathub. For now, there's an x86_64 RPM.
 
+### Building from source
 Since Rclone Shuttle is written in Rust, you can generate a release build for your architecture and OS by checking out the repo and running `cargo build --release`. You will need [GTK's development kit](https://gtk-rs.org/gtk4-rs/stable/latest/book/installation.html) and Rclone v1.65 or up.
