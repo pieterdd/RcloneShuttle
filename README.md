@@ -1,8 +1,6 @@
-<div align="center"><img src="meta/logo-with-text.png" alt="Rclone Shuttle logo"/></div><br />
+<div align="center"><img src="meta/logo-with-text.png" alt="Rclone Shuttle logo" width="300"/></div><br />
 
 GTK4 frontend for Rclone to upload files to [any supported](https://rclone.org/overview/) cloud storage provider or storage protocol.
-
-![Screenshot](meta/screenshot.png)
 
 Rclone Shuttle can:
 
@@ -10,6 +8,8 @@ Rclone Shuttle can:
 - Move, copy and delete files/folders
 - Open remote files locally via double click
 - Handle encrypted Rclone configuration files
+
+![Screenshot](meta/screenshot.png)
 
 Some of Rclone's supported cloud storage providers and protocols:
 
