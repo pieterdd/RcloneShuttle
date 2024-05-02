@@ -39,7 +39,7 @@ use relm4::{Component, RelmWidgetExt};
 use relm4_icons::icon_names;
 use std::ffi::OsString;
 use std::ops::Deref;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
 
@@ -837,6 +837,8 @@ impl Component for App {
                     let local_path =
                         RclonePath::from(&file_path.into_os_string().into_string().unwrap());
                     let local_filename = local_path.filename();
+                    println!("Dropped local path: {}", local_path);
+                    println!("Exists: {}", Path::new(&local_path.to_string()).exists());
                     sender.input(Self::Input::UploadRequested(
                         local_path,
                         self.path.clone().join(&local_filename),
