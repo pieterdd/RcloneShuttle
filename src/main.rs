@@ -956,7 +956,10 @@ impl Component for App {
                     let alert = gtk::AlertDialog::builder()
                         .modal(true)
                         .message(format!("Deleting {}", path.filename()))
-                        .detail("Are you sure? This is permanent.")
+                        .detail(match is_dir {
+                            true => "Are you sure? This will permanently delete the entire folder.",
+                            false => "Are you sure? This is permanent.",
+                        })
                         .buttons(["Delete", "Cancel"])
                         .default_button(0)
                         .cancel_button(1)
