@@ -368,36 +368,25 @@ impl Component for App {
                                                     set_orientation: gtk::Orientation::Horizontal,
                                                     set_halign: gtk::Align::End,
                                                     set_hexpand: true,
-                                                    add_css_class: "linked",
+                                                    set_spacing: 5,
 
                                                     gtk::Button {
-                                                        set_tooltip_text: Some("Add folder"),
                                                         connect_clicked => AppInMsg::CreateFolderRequested,
+                                                        add_css_class: "flat",
 
                                                         gtk::Box {
-                                                            gtk::Image {
-                                                                set_icon_name: Some(icon_names::PLUS),
+                                                            gtk::Label {
+                                                                set_text: "New folder",
                                                             },
                                                             model.create_folder_popover.widget(),
                                                         }
                                                     },
-
-                                                    gtk::Button {
-                                                        set_icon_name: icon_names::ARROW_TURN_UP_RIGHT,
-                                                        set_tooltip_text: Some("Move (F6)"),
-                                                        connect_clicked => Self::Input::MoveSelectionRequested,
-                                                    },
-                                                    gtk::Button {
-                                                        set_icon_name: icon_names::COPY,
-                                                        set_tooltip_text: Some("Copy (F7)"),
-                                                        connect_clicked => Self::Input::CopySelectionRequested,
+                                                    
+                                                    gtk::MenuButton {
+                                                        set_label: "Edit",
+                                                        set_menu_model: Some(&file_listing_actions),
                                                     },
 
-                                                    gtk::Button {
-                                                        set_icon_name: icon_names::CROSS_SMALL,
-                                                        set_tooltip_text: Some("Delete (Shift+Del)"),
-                                                        connect_clicked => Self::Input::DeleteSelectionRequested,
-                                                    }
                                                 }
                                             }
                                             FilePickerMode::Move(_) => {
@@ -455,6 +444,11 @@ impl Component for App {
         main_menu: {
             "Refresh remotes" => RemotesRefreshAction,
             "Configure remotes" => RemotesConfigureAction,
+        },
+        file_listing_actions: {
+            "Move" => MoveAction,
+            "Copy" => CopyAction,
+            "Delete" => DeleteAction,
         }
     }
 
@@ -559,13 +553,7 @@ impl Component for App {
         let delete_action: RelmAction<DeleteAction> = {
             RelmAction::new_stateless(
                 clone!(@strong sender, @strong file_listing_view, @strong window => move |_| {
-                    if let Some(focused_widget) = window.focus() {
-                        if let Some(downcast_parent) = focused_widget.parent() {
-                            if downcast_parent == file_listing_view {
                                 sender.input(Self::Input::DeleteSelectionRequested);
-                            }
-                        }
-                    }
                 }),
             )
         };
