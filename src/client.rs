@@ -121,7 +121,7 @@ impl RcloneClient {
                 raw_remotes
                     .trim()
                     .split('\n')
-                    .filter(|r| *r != "")
+                    .filter(|r| !r.is_empty())
                     .map(Into::into),
             );
             Ok(remotes)

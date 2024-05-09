@@ -187,7 +187,7 @@ impl Component for App {
                             #[wrap(Some)]
                             set_child = model.unlock_widget.widget(),
                         }
-                    } else if model.client.is_some() && model.remotes_view_wrapper.len() == 0 {
+                    } else if model.client.is_some() && model.remotes_view_wrapper.is_empty() {
                         adw::StatusPage {
                             set_title: "No remotes configured",
                             set_description: "Add a remote via 'rclone config'\nand then come back to browse it.".into(),
@@ -655,12 +655,9 @@ impl Component for App {
                         .build();
 
                     dialog.choose(Some(root), Some(&Cancellable::default()), move |selection| {
-                        match selection {
-                            Ok(1) => {
-                                config.skip_overwrite_disclaimer = true;
-                                config.save();
-                            },
-                            _ => {},
+                        if let Ok(1) = selection {
+                            config.skip_overwrite_disclaimer = true;
+                            config.save();
                         }
                     });
                 }
