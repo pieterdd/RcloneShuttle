@@ -100,7 +100,7 @@ pub enum AppInMsg {
     CopySelectionRequested,
     CopyTargetConfirmed,
     DeleteSelectionRequested,
-    DeleteConfirmed(RclonePath),
+    DeleteConfirmed(RclonePath, bool),
     TriggerGenericError(String, String, bool),
     FilePickerModeChange(FilePickerMode),
 }
@@ -952,6 +952,7 @@ impl Component for App {
                 let position = self.file_listing_view_wrapper.selection_model.selected();
                 if let Some(item) = self.file_listing_view_wrapper.get(position) {
                     let path = item.borrow().model.path.clone();
+                    let is_dir = item.borrow().model.is_dir;
                     let alert = gtk::AlertDialog::builder()
                         .modal(true)
                         .message(format!("Deleting {}", path.filename()))
@@ -962,18 +963,18 @@ impl Component for App {
                         .build();
                     alert.choose(Some(root), Some(&Cancellable::default()), move |outcome| {
                         if let Ok(0) = outcome {
-                            sender.input(Self::Input::DeleteConfirmed(path));
+                            sender.input(Self::Input::DeleteConfirmed(path, is_dir));
                         }
                     });
                 }
             }
-            Self::Input::DeleteConfirmed(path) => {
+            Self::Input::DeleteConfirmed(path, is_dir) => {
                 let client = self.client.clone();
                 let job = RcloneJob::new(RcloneJobType::Delete(path.clone()));
                 let uuid = job.uuid;
                 JOBS.write().insert(job.uuid, job);
                 sender.spawn_oneshot_command(move || {
-                    let result = match client.as_ref().unwrap().rm(&path) {
+                    let result = match client.as_ref().unwrap().rm(&path, is_dir) {
                         Ok(()) => AppOutCmd::JobUpdated(uuid, RcloneJobStatus::Finished),
                         Err(error_str) => {
                             AppOutCmd::JobUpdated(uuid, RcloneJobStatus::Failed(error_str))

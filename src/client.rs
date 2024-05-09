@@ -199,10 +199,16 @@ impl RcloneClient {
         }
     }
 
-    pub fn rm(&self, path: &RclonePath) -> Result<(), String> {
+    pub fn rm(&self, path: &RclonePath, is_dir: bool) -> Result<(), String> {
         let output = self
             .build_command()
-            .args(["delete", &path.to_string()])
+            .args([
+                match is_dir {
+                    true => "purge",
+                    false => "delete",
+                },
+                &path.to_string(),
+            ])
             .output()
             .map_err(|_| "Command did not start")?;
 
