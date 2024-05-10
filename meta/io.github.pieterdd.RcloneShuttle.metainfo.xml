@@ -37,6 +37,9 @@
   
   <description>
     <p>
+      (Rclone Shuttle is still experimental. If you prefer a more mature but unmaintained alternative, we recommend Rclone Browser.)
+    </p>
+    <p>
       Access all your cloud storage providers from one app. Powered by Rclone's superb command line tool, Rclone Shuttle lets you browse your files wherever they are hosted.
     </p>
     <p>Rclone Shuttle can:</p>
@@ -62,9 +65,6 @@
       <li>SMB (Samba)</li>
       <li>WebDAV (works with Nextcloud)</li>
     </ul>
-    <p>
-      If you are looking for a more feature-complete alternative, check out Rclone Browser.
-    </p>
   </description>
   
   <releases>
