@@ -199,6 +199,26 @@ impl RcloneClient {
         }
     }
 
+    pub fn rename(&self, source_path: &RclonePath, new_filename: &String) -> Result<(), String> {
+        let target_path = source_path.resolve_to_parent().join(&new_filename);
+        let output = self
+            .build_command()
+            .args(["moveto", &source_path.to_string(), &target_path.to_string()])
+            .output()
+            .map_err(|_| "Command did not start")?;
+
+        if output.status.success() {
+            Ok(())
+        } else {
+            println!("{}", from_utf8(&output.stderr).unwrap());
+            Err(format!(
+                "Copy failed with {}\n\n{}",
+                output.status,
+                from_utf8(&output.stderr).unwrap(),
+            ))
+        }
+    }
+
     pub fn rm(&self, path: &RclonePath, is_dir: bool) -> Result<(), String> {
         let output = self
             .build_command()

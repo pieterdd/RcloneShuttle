@@ -18,6 +18,7 @@ pub struct StringPromptDialog {
 pub struct StringPromptDialogInit {
     pub title: String,
     pub prompt: String,
+    pub default_value: Option<String>,
     pub submit_label: String,
 }
 
@@ -81,7 +82,9 @@ impl Component for StringPromptDialog {
         root: Self::Root,
         sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
-        let entry = gtk::Entry::builder().build();
+        let entry = gtk::Entry::builder()
+            .text(&init.default_value.unwrap_or(String::from("")))
+            .build();
         entry.connect_activate(clone!(@strong sender => move |_| {
             sender.input(Self::Input::SubmitInput);
         }));

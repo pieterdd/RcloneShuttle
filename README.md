@@ -5,7 +5,7 @@ GTK4 frontend for Rclone to upload files to [any supported](https://rclone.org/o
 Rclone Shuttle can:
 
 - Upload files via drag and drop
-- Move, copy and delete files/folders
+- Rename, move, copy and delete files/folders
 - Open remote files locally via double click
 - Handle encrypted Rclone configuration files
 

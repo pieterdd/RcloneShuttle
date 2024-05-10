@@ -51,6 +51,7 @@ relm4::new_action_group!(FileListingsViewGroup, "file_listings_view");
 relm4::new_stateless_action!(PathRefreshAction, FileListingsViewGroup, "path_refresh");
 relm4::new_stateless_action!(MoveAction, FileListingsViewGroup, "move");
 relm4::new_stateless_action!(CopyAction, FileListingsViewGroup, "copy");
+relm4::new_stateless_action!(RenameAction, FileListingsViewGroup, "rename");
 relm4::new_stateless_action!(DeleteAction, FileListingsViewGroup, "delete");
 relm4::new_stateless_action!(PathParentAction, FileListingsViewGroup, "path_parent");
 relm4::new_stateless_action!(PathUndoAction, FileListingsViewGroup, "path_undo");
@@ -92,11 +93,14 @@ pub enum AppInMsg {
     CreateFolderRequested,
     CreateFolderConfirmed(String),
     MoveKeyPressed,
+    CopyKeyPressed,
+    RenameKeyPressed,
     MoveSelectionRequested,
     MoveTargetConfirmed,
-    CopyKeyPressed,
     CopySelectionRequested,
     CopyTargetConfirmed,
+    RenameSelectionRequested,
+    RenameConfirmed(RclonePath, String),
     DeleteSelectionRequested,
     DeleteConfirmed(RclonePath, bool),
     TriggerGenericError(String, String, bool),
@@ -443,6 +447,7 @@ impl Component for App {
             "Configure remotes" => RemotesConfigureAction,
         },
         file_listing_actions: {
+            "Rename" => RenameAction,
             "Move" => MoveAction,
             "Copy" => CopyAction,
             "Delete" => DeleteAction,
@@ -527,6 +532,11 @@ impl Component for App {
 
         let app = relm4::main_application();
         let window = &widgets.window;
+        let rename_action: RelmAction<RenameAction> = {
+            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+                sender.input(Self::Input::RenameKeyPressed);
+            }))
+        };
         let move_action: RelmAction<MoveAction> = {
             RelmAction::new_stateless(clone!(@strong sender => move |_| {
                 sender.input(Self::Input::MoveKeyPressed);
@@ -575,6 +585,7 @@ impl Component for App {
             }))
         };
 
+        app.set_accelerators_for_action::<RenameAction>(&["F2"]);
         app.set_accelerators_for_action::<MoveAction>(&["F6"]);
         app.set_accelerators_for_action::<CopyAction>(&["F7"]);
         app.set_accelerators_for_action::<DeleteAction>(&["<Shift>Delete"]);
@@ -584,6 +595,7 @@ impl Component for App {
         app.set_accelerators_for_action::<PathRedoAction>(&["<Alt>Right"]);
 
         let mut file_listings_view_group = RelmActionGroup::<FileListingsViewGroup>::new();
+        file_listings_view_group.add_action(rename_action);
         file_listings_view_group.add_action(move_action);
         file_listings_view_group.add_action(copy_action);
         file_listings_view_group.add_action(delete_action);
@@ -837,10 +849,17 @@ impl Component for App {
                     _ => {},
                 };
             }
+            Self::Input::RenameKeyPressed => {
+                match FILE_PICKER_MODE.read().deref() {
+                    FilePickerMode::Select => sender.input(Self::Input::RenameSelectionRequested),
+                    _ => {},
+                }
+            }
             Self::Input::CreateFolderRequested => {
                 let dialog = StringPromptDialog::builder().launch(StringPromptDialogInit {
                     title: String::from("New folder"),
                     prompt: String::from("Enter a name for the new folder."),
+                    default_value: None,
                     submit_label: String::from("Create"),
                 }).forward(sender.input_sender(), |msg| match msg {
                     StringPromptDialogOutMsg::InputSubmitted(folder_name) => AppInMsg::CreateFolderConfirmed(folder_name),
@@ -945,6 +964,39 @@ impl Component for App {
                         };
                         result
                     })
+                }
+            }
+            Self::Input::RenameSelectionRequested => {
+                let position = self.file_listing_view_wrapper.selection_model.selected();
+                if let Some(item) = self.file_listing_view_wrapper.get(position) {
+                    let path = item.borrow().model.path.clone();
+                    let dialog = StringPromptDialog::builder().launch(StringPromptDialogInit {
+                        title: format!("Rename '{}'", path.filename()),
+                        prompt: String::from("Enter a new name to proceed."),
+                        default_value: Some(String::from(path.filename())),
+                        submit_label: String::from("Confirm"), 
+                    }).forward(sender.input_sender(), move |msg| match msg {
+                        StringPromptDialogOutMsg::InputSubmitted(new_filename) => Self::Input::RenameConfirmed(path.clone(), new_filename),
+                    });
+                    dialog.widget().present(root);
+                    self.active_string_prompt = Some(dialog);
+                }
+            }
+            Self::Input::RenameConfirmed(path, new_filename) => {
+                self.active_string_prompt = None;
+                if let Some(client) = &self.client {
+                    match client.rename(&path, &new_filename) {
+                        Ok(()) => {
+                            sender.input(Self::Input::PathRefreshRequested);
+                        }
+                        Err(error_str) => {
+                            sender.input(Self::Input::TriggerGenericError(
+                                String::from("Something went wrong"),
+                                error_str,
+                                false,
+                            ));
+                        }
+                    }
                 }
             }
             Self::Input::DeleteSelectionRequested => {
