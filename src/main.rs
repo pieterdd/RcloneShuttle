@@ -83,6 +83,7 @@ pub enum AppInMsg {
     PathParentRequested,
     PathUndoRequested,
     PathRedoRequested,
+    PathEntered(RclonePath),
     PathChanged(RclonePath),
     OpenRequested(RclonePath),
     UploadRequested(RclonePath, RclonePath),
@@ -253,7 +254,7 @@ impl Component for App {
                                             set_text: &model.path.to_string(),
                                             set_margin_horizontal: 5,
                                             connect_activate[sender] => move |entry| {
-                                                sender.input(Self::Input::PathChanged(RclonePath::from(entry.text().as_ref())));
+                                                sender.input(Self::Input::PathEntered(RclonePath::from(entry.text().as_ref())));
                                             },
                                         },
 
@@ -702,6 +703,11 @@ impl Component for App {
                     self.undoable_paths.push(self.path.clone());
                     sender.input(Self::Input::PathChanged(path));
                 }
+            }
+            Self::Input::PathEntered(path) => {
+                self.undoable_paths.push(self.path.clone());
+                self.redoable_paths.clear();
+                sender.input(Self::Input::PathChanged(path));
             }
             Self::Input::PathChanged(path) => {
                 self.selected_file_listing_copy = None;
