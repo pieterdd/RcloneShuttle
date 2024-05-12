@@ -850,9 +850,8 @@ impl Component for App {
                 };
             }
             Self::Input::RenameKeyPressed => {
-                match FILE_PICKER_MODE.read().deref() {
-                    FilePickerMode::Select => sender.input(Self::Input::RenameSelectionRequested),
-                    _ => {},
+                if let FilePickerMode::Select = FILE_PICKER_MODE.read().deref() {
+                    sender.input(Self::Input::RenameSelectionRequested);
                 }
             }
             Self::Input::CreateFolderRequested => {
@@ -973,7 +972,7 @@ impl Component for App {
                     let dialog = StringPromptDialog::builder().launch(StringPromptDialogInit {
                         title: format!("Rename '{}'", path.filename()),
                         prompt: String::from("Enter a new name to proceed."),
-                        default_value: Some(String::from(path.filename())),
+                        default_value: Some(path.filename()),
                         submit_label: String::from("Confirm"), 
                     }).forward(sender.input_sender(), move |msg| match msg {
                         StringPromptDialogOutMsg::InputSubmitted(new_filename) => Self::Input::RenameConfirmed(path.clone(), new_filename),

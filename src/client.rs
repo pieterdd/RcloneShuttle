@@ -199,8 +199,8 @@ impl RcloneClient {
         }
     }
 
-    pub fn rename(&self, source_path: &RclonePath, new_filename: &String) -> Result<(), String> {
-        let target_path = source_path.resolve_to_parent().join(&new_filename);
+    pub fn rename(&self, source_path: &RclonePath, new_filename: &str) -> Result<(), String> {
+        let target_path = source_path.resolve_to_parent().join(new_filename);
         let output = self
             .build_command()
             .args(["moveto", &source_path.to_string(), &target_path.to_string()])
