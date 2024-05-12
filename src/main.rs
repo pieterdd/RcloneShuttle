@@ -1,9 +1,6 @@
 use crate::client::MkdirError;
 use crate::components::file_listing_view::FileListingView;
 use crate::components::remote_view::RemoteView;
-use crate::components::string_prompt_popover::{
-    StringPromptPopoverInit, StringPromptPopoverOutMsg,
-};
 use crate::components::unlock_view::{UnlockView, UnlockViewInMsg, UnlockViewOutMsg};
 use crate::globals::FILE_PICKER_MODE;
 use crate::gtk::DropTarget;
@@ -11,10 +8,10 @@ use crate::model::{FilePickerMode, RcloneJobStatus};
 use adw::gio::Cancellable;
 use adw::glib::clone;
 use adw::gtk::ffi::GTK_INVALID_LIST_POSITION;
-use adw::prelude::{ButtonExt, EditableExt};
+use adw::prelude::{ButtonExt, EditableExt, AdwDialogExt};
 use client::{RcloneClient, RcloneFileListing};
 use components::queue_view::QueueView;
-use components::string_prompt_popover::StringPromptPopover;
+use components::string_prompt_dialog::{StringPromptDialog, StringPromptDialogInit, StringPromptDialogOutMsg};
 use config::AppConfig;
 use dirs::cache_dir;
 use globals::JOBS;
@@ -132,7 +129,7 @@ struct App {
     client: Option<RcloneClient>,
     requires_password: bool,
     selected_file_listing_copy: Option<RcloneFileListing>,
-    create_folder_popover: Controller<StringPromptPopover>,
+    active_string_prompt: Option<Controller<StringPromptDialog>>,
 }
 
 impl App {
@@ -379,7 +376,6 @@ impl Component for App {
                                                             gtk::Label {
                                                                 set_text: "New folder",
                                                             },
-                                                            model.create_folder_popover.widget(),
                                                         }
                                                     },
                                                     
@@ -510,16 +506,6 @@ impl Component for App {
             }
         }
 
-        let create_folder_popover = StringPromptPopover::builder()
-            .launch(StringPromptPopoverInit {
-                prompt: String::from("Enter folder name"),
-            })
-            .forward(sender.input_sender(), |msg| match msg {
-                StringPromptPopoverOutMsg::InputSubmitted(folder_name) => {
-                    Self::Input::CreateFolderConfirmed(folder_name)
-                }
-            });
-
         let model = App {
             unlock_widget,
             remotes_view_wrapper,
@@ -532,7 +518,7 @@ impl Component for App {
             client: None,
             requires_password,
             selected_file_listing_copy: None,
-            create_folder_popover,
+            active_string_prompt: None,
         };
         let remotes_view = model.remotes_view_wrapper.widget();
         let file_listing_view = &model.file_listing_view_wrapper.view;
@@ -852,10 +838,17 @@ impl Component for App {
                 };
             }
             Self::Input::CreateFolderRequested => {
-                self.create_folder_popover.widget().set_visible(true);
+                let dialog = StringPromptDialog::builder().launch(StringPromptDialogInit {
+                    title: String::from("New folder"),
+                    prompt: String::from("Enter a name for the new folder."),
+                    submit_label: String::from("Create"),
+                }).forward(sender.input_sender(), |msg| match msg {
+                    StringPromptDialogOutMsg::InputSubmitted(folder_name) => AppInMsg::CreateFolderConfirmed(folder_name),
+                });
+                dialog.widget().present(root);
+                self.active_string_prompt = Some(dialog);
             }
             Self::Input::CreateFolderConfirmed(folder_name) => {
-                self.create_folder_popover.widget().set_visible(false);
                 if let Some(client) = &self.client {
                     let path = self.path.join(&folder_name);
                     match client.mkdir(&path) {
