@@ -20,15 +20,15 @@
   
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/2ac5315b1f0b898f4eacc7131a3bd4fc295d5b0d/meta/screenshot.png</image>
+      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/16f13d0255405c49c9613f4091a902e8d28ba896/meta/screenshot.png</image>
       <caption>Main window</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/2ac5315b1f0b898f4eacc7131a3bd4fc295d5b0d/meta/screenshot-locked.png</image>
+      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/16f13d0255405c49c9613f4091a902e8d28ba896/meta/screenshot-locked.png</image>
       <caption>Lock screen</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/bf16947c9866c5d95880278c8585201514c2be64/meta/screenshot.png</image>
+      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/16f13d0255405c49c9613f4091a902e8d28ba896/meta/screenshot-dark.png</image>
       <caption>Main window (dark theme)</caption>
     </screenshot>
   </screenshots>
