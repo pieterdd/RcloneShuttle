@@ -65,6 +65,7 @@
       <li>SMB (Samba)</li>
       <li>WebDAV (works with Nextcloud)</li>
     </ul>
+    <p>Full host filesystem access is necessary to enable drag-and-drop until https://github.com/pieterdd/RcloneShuttle/issues/7 is fixed.</p>
   </description>
   
   <releases>
