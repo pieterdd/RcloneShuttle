@@ -19,6 +19,7 @@ use model::{RcloneJob, RcloneJobType};
 use path_tools::RclonePath;
 use relm4::actions::{AccelsPlus, RelmAction, RelmActionGroup};
 use relm4::adw::prelude::NavigationPageExt;
+use relm4::adw::ToolbarStyle;
 use relm4::factory::FactoryVecDeque;
 use relm4::gtk::gdk::{DragAction, FileList};
 use relm4::gtk::prelude::{
@@ -168,6 +169,7 @@ impl Component for App {
             set_default_size: (800, 600),
 
             adw::ToolbarView {
+                set_top_bar_style: ToolbarStyle::Raised,
                 add_top_bar = &adw::HeaderBar {
                     pack_start = &gtk::MenuButton {
                         set_icon_name: icon_names::MENU,
@@ -229,6 +231,7 @@ impl Component for App {
                                 set_child = &adw::ToolbarView {
                                     set_vexpand: true,
 
+                                    set_top_bar_style: ToolbarStyle::Raised,
                                     add_top_bar = &gtk::Box {
                                         set_height_request: 50,
                                         set_css_classes: &["toolbar"],
