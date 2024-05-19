@@ -11,7 +11,7 @@ Rclone Shuttle can:
 - Open remote files locally via double click
 - Handle encrypted Rclone configuration files
 
-![Screenshot](meta/screenshot.png)
+![Screenshot](meta/screenshots/browser.png)
 
 Some of Rclone's supported cloud storage providers and protocols:
 
