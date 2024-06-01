@@ -18,7 +18,7 @@ use globals::JOBS;
 use model::{RcloneJob, RcloneJobType};
 use path_tools::RclonePath;
 use relm4::actions::{AccelsPlus, RelmAction, RelmActionGroup};
-use relm4::adw::prelude::NavigationPageExt;
+use relm4::adw::prelude::{NavigationPageExt, AlertDialogExt};
 use relm4::adw::ToolbarStyle;
 use relm4::factory::FactoryVecDeque;
 use relm4::gtk::gdk::{DragAction, FileList};
@@ -1004,22 +1004,19 @@ impl Component for App {
                 if let Some(item) = self.file_listing_view_wrapper.get(position) {
                     let path = item.borrow().model.path.clone();
                     let is_dir = item.borrow().model.is_dir;
-                    let alert = gtk::AlertDialog::builder()
-                        .modal(true)
-                        .message(format!("Deleting '{}'", path.filename()))
-                        .detail(match is_dir {
+                    let alert = adw::AlertDialog::builder()
+                        .heading(format!("Deleting '{}'", path.filename()))
+                        .body(match is_dir {
                             true => "Are you sure? This will permanently delete the entire folder.",
                             false => "Are you sure? This is permanent.",
-                        })
-                        .buttons(["Delete", "Cancel"])
-                        .default_button(0)
-                        .cancel_button(1)
-                        .build();
-                    alert.choose(Some(root), Some(&Cancellable::default()), move |outcome| {
-                        if let Ok(0) = outcome {
-                            sender.input(Self::Input::DeleteConfirmed(path, is_dir));
-                        }
+                        }).build();
+                    alert.add_response("delete", "Delete");
+                    alert.add_response("cancel", "Cancel");
+                    alert.set_response_appearance("delete", adw::ResponseAppearance::Destructive);
+                    alert.connect_response(Some("delete"), move |_, _| {
+                        sender.input(Self::Input::DeleteConfirmed(path.clone(), is_dir));
                     });
+                    alert.present(root);
                 }
             }
             Self::Input::DeleteConfirmed(path, is_dir) => {
