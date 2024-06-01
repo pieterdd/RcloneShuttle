@@ -1006,7 +1006,7 @@ impl Component for App {
                     let is_dir = item.borrow().model.is_dir;
                     let alert = gtk::AlertDialog::builder()
                         .modal(true)
-                        .message(format!("Deleting {}", path.filename()))
+                        .message(format!("Deleting '{}'", path.filename()))
                         .detail(match is_dir {
                             true => "Are you sure? This will permanently delete the entire folder.",
                             false => "Are you sure? This is permanent.",
