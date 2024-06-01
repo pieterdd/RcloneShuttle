@@ -985,21 +985,19 @@ impl Component for App {
                 }
             }
             Self::Input::RenameConfirmed(path, new_filename) => {
-                self.active_string_prompt = None;
-                if let Some(client) = &self.client {
-                    match client.rename(&path, &new_filename) {
-                        Ok(()) => {
-                            sender.input(Self::Input::PathRefreshRequested);
-                        }
+                let client = self.client.clone();
+                let job = RcloneJob::new(RcloneJobType::Rename(path.resolve_to_parent().join(&new_filename)));
+                let uuid = job.uuid;
+                JOBS.write().insert(job.uuid, job);
+                sender.spawn_oneshot_command(move || {
+                    let result = match client.as_ref().unwrap().rename(&path, &new_filename) {
+                        Ok(()) => AppOutCmd::JobUpdated(uuid, RcloneJobStatus::Finished),
                         Err(error_str) => {
-                            sender.input(Self::Input::TriggerGenericError(
-                                String::from("Something went wrong"),
-                                error_str,
-                                false,
-                            ));
+                            AppOutCmd::JobUpdated(uuid, RcloneJobStatus::Failed(error_str))
                         }
-                    }
-                }
+                    };
+                    result
+                });
             }
             Self::Input::DeleteSelectionRequested => {
                 let position = self.file_listing_view_wrapper.selection_model.selected();

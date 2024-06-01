@@ -54,6 +54,9 @@ impl QueueDetailView {
                     target_path.resolve_to_parent()
                 )
             }
+            RcloneJobType::Rename(path) => {
+                format!("Rename {} in {}", path.filename(), path.resolve_to_parent())
+            }
             RcloneJobType::Delete(path) => {
                 format!(
                     "Delete {} from {}",
