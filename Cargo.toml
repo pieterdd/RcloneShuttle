@@ -20,7 +20,7 @@ assets = [
 
 [package.metadata.generate-rpm.requires]
 gtk4 = ">= 4.14.3"
-rclone = ">= 1.64.2"
+rclone = ">= 1.66"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

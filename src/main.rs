@@ -638,7 +638,7 @@ impl Component for App {
                 }
             }
             Self::Input::ClientConnectionFailed => {
-                sender.input(AppInMsg::TriggerGenericError(String::from("Could not initialize rclone"), String::from("Please make sure rclone v1.65 or higher is installed and available from your system path."), true))
+                sender.input(AppInMsg::TriggerGenericError(String::from("Could not initialize rclone"), String::from("Please make sure rclone v1.66 or higher is installed and available from your system path."), true))
             }
             Self::Input::ClientConnected(client) => {
                 // Assign the client and the remotes in one go to ensure the first remote is
