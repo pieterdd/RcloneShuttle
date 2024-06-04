@@ -2,7 +2,7 @@ use crate::globals::JOBS;
 use crate::model::{RcloneJob, RcloneJobStatus, RcloneJobType};
 use relm4::adw::prelude::{BoxExt, ButtonExt, OrientableExt, WidgetExt};
 use relm4::factory::{DynamicIndex, FactoryComponent};
-use relm4::{gtk, FactorySender, RelmWidgetExt};
+use relm4::{gtk, FactorySender};
 use relm4_icons::icon_names;
 use uuid::Uuid;
 
@@ -128,8 +128,7 @@ impl FactoryComponent for QueueDetailView {
                 set_halign: gtk::Align::End,
                 set_valign: gtk::Align::Center,
                 set_has_frame: false,
-                inline_css: "padding: 3px 7px",
-                set_label: "x",
+                set_icon_name: icon_names::MINUS_CIRCLE_FILLED,
                 set_tooltip_text: Some("Remove from queue"),
                 set_sensitive: self.job_copy.status != RcloneJobStatus::Ongoing,
                 connect_clicked => Self::Input::JobDeletionRequested,
