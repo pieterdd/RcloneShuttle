@@ -1,13 +1,16 @@
+use std::collections::BTreeMap;
+
 use adw::prelude::{AdwDialogExt, BoxExt};
 use relm4::factory::FactoryVecDeque;
-use relm4::gtk::prelude::{OrientableExt, WidgetExt};
+use relm4::gtk::prelude::{ButtonExt, OrientableExt, WidgetExt};
 use relm4::gtk::{self};
 use relm4::ComponentSender;
 use relm4::{adw, RelmWidgetExt};
 use relm4::{Component, ComponentParts};
+use relm4_icons::icon_names;
 
 use crate::globals::JOBS;
-use crate::model::RcloneJob;
+use crate::model::{RcloneJob, RcloneJobStatus};
 
 use super::queue_detail_view::QueueDetailView;
 
@@ -19,6 +22,7 @@ pub struct QueueDialog {
 #[derive(Debug)]
 pub enum QueueDialogInput {
     JobsUpdated,
+    CleanNonOngoingJobs,
 }
 
 impl QueueDialog {
@@ -49,7 +53,15 @@ impl Component for QueueDialog {
             set_can_close: true,
             #[wrap(Some)]
             set_child = &adw::ToolbarView {
-                add_top_bar = &adw::HeaderBar {},
+                add_top_bar = &adw::HeaderBar {
+                    pack_start = &gtk::Button {
+                        set_icon_name: icon_names::BRUSH,
+                        #[watch]
+                        set_sensitive: !model.queue_detail_views_wrapper.is_empty(),
+                        set_tooltip_text: Some("Clear terminated jobs"),
+                        connect_clicked => Self::Input::CleanNonOngoingJobs,
+                    }
+                },
 
                 #[wrap(Some)]
                 set_content = &gtk::Box {
@@ -102,6 +114,16 @@ impl Component for QueueDialog {
 
     fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>, _root: &Self::Root) {
         match message {
+            Self::Input::CleanNonOngoingJobs => {
+                let mut new_jobs = BTreeMap::new();
+                for job in JOBS.read().iter() {
+                    if job.1.status == RcloneJobStatus::Ongoing {
+                        new_jobs.insert(job.0.clone(), job.1.clone());
+                    }
+                }
+                *JOBS.write() = new_jobs;
+                Self::propagate_jobs_update(&mut self.queue_detail_views_wrapper);
+            }
             Self::Input::JobsUpdated => {
                 Self::propagate_jobs_update(&mut self.queue_detail_views_wrapper);
             }
