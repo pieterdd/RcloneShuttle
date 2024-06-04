@@ -66,7 +66,7 @@ impl Component for QueueDialog {
                 #[wrap(Some)]
                 set_content = &gtk::Box {
                     set_orientation: gtk::Orientation::Vertical,
-                    set_width_request: 400,
+                    set_hexpand: true,
                     set_halign: gtk::Align::Center,
                     set_valign: gtk::Align::Start,
                     set_margin_all: 10,
@@ -87,6 +87,7 @@ impl Component for QueueDialog {
                         set_text: "Queue is empty",
                         #[watch]
                         set_visible: model.queue_detail_views_wrapper.is_empty().clone(),
+                        set_margin_all: 5,
                     },
                 }
             }
