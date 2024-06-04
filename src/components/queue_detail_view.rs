@@ -85,7 +85,8 @@ impl FactoryComponent for QueueDetailView {
     type ParentWidget = gtk::Box;
 
     view! {
-        root = gtk::Box {
+        #[root]
+        gtk::Box {
             set_orientation: gtk::Orientation::Horizontal,
             set_halign: gtk::Align::Fill,
             set_valign: gtk::Align::Center,

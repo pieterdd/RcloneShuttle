@@ -10,7 +10,7 @@ use adw::glib::clone;
 use adw::gtk::ffi::GTK_INVALID_LIST_POSITION;
 use adw::prelude::{ButtonExt, EditableExt, AdwDialogExt};
 use client::{RcloneClient, RcloneFileListing};
-use components::queue_view::QueueView;
+use components::queue_button::QueueButton;
 use components::string_prompt_dialog::{StringPromptDialog, StringPromptDialogInit, StringPromptDialogOutMsg};
 use config::AppConfig;
 use dirs::cache_dir;
@@ -127,7 +127,7 @@ struct App {
     remotes_view_wrapper: FactoryVecDeque<RemoteView>,
     file_listing_view_wrapper: TypedListView<FileListingView, gtk::SingleSelection>,
     file_listing_view_state: FileListingViewState,
-    queue_view: Controller<QueueView>,
+    queue_button: Controller<QueueButton>,
     path: RclonePath,
     undoable_paths: Vec<RclonePath>,
     redoable_paths: Vec<RclonePath>,
@@ -220,7 +220,8 @@ impl Component for App {
                                             },
                                         },
                                     },
-                                    model.queue_view.widget(),
+
+                                    model.queue_button.widget(),
                                 }
                             },
                             #[wrap(Some)]
@@ -470,7 +471,7 @@ impl Component for App {
                         AppInMsg::PasswordReceived(password)
                     }
                 });
-        let queue_view = QueueView::builder().launch(()).detach();
+        let queue_button = QueueButton::builder().launch(()).detach();
 
         let remotes_view_wrapper = FactoryVecDeque::builder()
             .launch(gtk::ListBox::new())
@@ -519,7 +520,7 @@ impl Component for App {
             remotes_view_wrapper,
             file_listing_view_wrapper,
             file_listing_view_state: FileListingViewState::Loading,
-            queue_view,
+            queue_button,
             path: RclonePath::from(""),
             undoable_paths: vec![],
             redoable_paths: vec![],
