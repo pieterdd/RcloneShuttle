@@ -1,3 +1,4 @@
+use crate::globals::JOBS;
 use crate::model::{get_ongoing_jobs, has_failed_jobs};
 use relm4::adw::prelude::AdwDialogExt;
 use relm4::gtk::prelude::{BoxExt, ButtonExt, WidgetExt};
@@ -19,6 +20,7 @@ pub struct QueueButton {
 #[derive(Debug)]
 pub enum QueueViewInMsg {
     DialogRequested,
+    JobsUpdated,
 }
 
 #[relm4::component(pub)]
@@ -78,6 +80,7 @@ impl SimpleComponent for QueueButton {
         root: Self::Root,
         sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
+        JOBS.subscribe(sender.input_sender(), |_| Self::Input::JobsUpdated);
         let widgets = view_output!();
         let dialog = QueueDialog::builder().launch(()).detach();
         let model = Self { root, dialog };
@@ -87,6 +90,7 @@ impl SimpleComponent for QueueButton {
 
     fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>) {
         match message {
+            Self::Input::JobsUpdated => {}
             Self::Input::DialogRequested => {
                 self.dialog.widget().present(&self.root);
             }

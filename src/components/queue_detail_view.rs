@@ -1,6 +1,7 @@
 use crate::globals::JOBS;
 use crate::model::{RcloneJob, RcloneJobStatus, RcloneJobType};
-use relm4::adw::prelude::{BoxExt, ButtonExt, OrientableExt, WidgetExt};
+use relm4::adw;
+use relm4::adw::prelude::{ActionRowExt, ButtonExt, ListBoxRowExt, PreferencesRowExt, WidgetExt};
 use relm4::factory::{DynamicIndex, FactoryComponent};
 use relm4::{gtk, FactorySender};
 use relm4_icons::icon_names;
@@ -82,56 +83,46 @@ impl FactoryComponent for QueueDetailView {
     type Output = ();
     type CommandOutput = ();
     type Widgets = CounterWidgets;
-    type ParentWidget = gtk::Box;
+    type ParentWidget = adw::PreferencesGroup;
 
     view! {
         #[root]
-        gtk::Box {
-            set_orientation: gtk::Orientation::Horizontal,
-            set_halign: gtk::Align::Fill,
-            set_valign: gtk::Align::Center,
-            set_spacing: 10,
-
-            append = if matches!(self.job_copy.status, RcloneJobStatus::Ongoing) {
-                gtk::Spinner {
-                    set_spinning: true,
-                    set_height_request: 30,
+        adw::PreferencesRow {
+            #[wrap(Some)]
+            set_child = &adw::ActionRow {
+                set_title: self.job_description.as_str(),
+                set_activatable: false,
+                set_selectable: false,
+                add_prefix = if matches!(self.job_copy.status, RcloneJobStatus::Ongoing) {
+                    gtk::Spinner {
+                        set_spinning: true,
+                        set_height_request: 20,
+                        set_valign: gtk::Align::Center,
+                    }
+                } else {
+                    gtk::Image {
+                        set_pixel_size: 20,
+                        set_icon_name: match self.job_copy.status {
+                            RcloneJobStatus::Ongoing => None,
+                            RcloneJobStatus::Finished => Some(icon_names::CHECK_ROUND_OUTLINE),
+                            RcloneJobStatus::Failed(_) => Some(icon_names::ERROR_OUTLINE)
+                        },
+                        set_tooltip_text: match self.job_copy.status {
+                            RcloneJobStatus::Ongoing => Some("Ongoing"),
+                            RcloneJobStatus::Finished => Some("Finished"),
+                            RcloneJobStatus::Failed(_) => Some("Failed")
+                        },
+                    }
+                },
+                add_suffix = &gtk::Button {
+                    set_halign: gtk::Align::End,
                     set_valign: gtk::Align::Center,
+                    set_has_frame: false,
+                    set_icon_name: icon_names::MINUS_CIRCLE_FILLED,
+                    set_tooltip_text: Some("Remove from queue"),
+                    set_visible: self.job_copy.status != RcloneJobStatus::Ongoing,
+                    connect_clicked => Self::Input::JobDeletionRequested,
                 }
-            } else {
-                gtk::Image {
-                    set_pixel_size: 25,
-                    set_icon_name: match self.job_copy.status {
-                        RcloneJobStatus::Ongoing => None,
-                        RcloneJobStatus::Finished => Some(icon_names::CHECK_ROUND_OUTLINE),
-                        RcloneJobStatus::Failed(_) => Some(icon_names::ERROR_OUTLINE)
-                    },
-                    set_tooltip_text: match self.job_copy.status {
-                        RcloneJobStatus::Ongoing => Some("Ongoing"),
-                        RcloneJobStatus::Finished => Some("Finished"),
-                        RcloneJobStatus::Failed(_) => Some("Failed")
-                    },
-                }
-            },
-
-            #[name(label)]
-            gtk::Label {
-                #[watch]
-                set_label: self.job_description.as_str(),
-                set_halign: gtk::Align::Start,
-                set_max_width_chars: 200,
-                set_hexpand: true,
-                set_wrap: true,
-            },
-
-            gtk::Button {
-                set_halign: gtk::Align::End,
-                set_valign: gtk::Align::Center,
-                set_has_frame: false,
-                set_icon_name: icon_names::MINUS_CIRCLE_FILLED,
-                set_tooltip_text: Some("Remove from queue"),
-                set_sensitive: self.job_copy.status != RcloneJobStatus::Ongoing,
-                connect_clicked => Self::Input::JobDeletionRequested,
             }
         }
     }
