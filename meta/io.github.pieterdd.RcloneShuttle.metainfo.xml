@@ -1,50 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
   <id>io.github.pieterdd.RcloneShuttle</id>
-  
+
   <name>Rclone Shuttle</name>
   <summary>Upload your files to anywhere</summary>
   <developer id="io.github.pieterdd">
     <name>pieterdd</name>
   </developer>
-  
+
   <metadata_license>MIT</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-  
+
   <content_rating type="oars-1.1" />
-  
+
   <branding>
     <color type="primary" scheme_preference="light">#fff4e9</color>
     <color type="primary" scheme_preference="dark">#403530</color>
   </branding>
-  
+
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/browser.png</image>
+      <image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/browser.png</image>
       <caption>Browser (light theme)</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/no-remotes.png</image>
+      <image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/no-remotes.png</image>
       <caption>Default settings (no remotes available)</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/lock-screen.png</image>
+      <image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/lock-screen.png</image>
       <caption>Opening a password-protected Rclone config</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/browser-dark.png</image>
+      <image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/browser-dark.png</image>
       <caption>Browser (dark theme)</caption>
     </screenshot>
   </screenshots>
-  
+
   <url type="homepage">https://github.com/pieterdd/RcloneShuttle</url>
-  
+
   <description>
     <p>
-      (Rclone Shuttle is still experimental. If you prefer a more mature but unmaintained alternative, we recommend Rclone Browser.)
+      (Rclone Shuttle is still experimental. If you prefer a more mature but unmaintained
+      alternative, we recommend Rclone Browser.)
     </p>
     <p>
-      Access all your cloud storage providers from one app. Powered by Rclone's superb command line tool, Rclone Shuttle lets you browse your files wherever they are hosted.
+      Access all your cloud storage providers from one app. Powered by Rclone's superb command line
+      tool, Rclone Shuttle lets you browse your files wherever they are hosted.
     </p>
     <p>Rclone Shuttle can:</p>
     <ul>
@@ -69,10 +75,20 @@
       <li>SMB (Samba)</li>
       <li>WebDAV (works with Nextcloud)</li>
     </ul>
-    <p>Full host filesystem access is necessary to enable drag-and-drop until https://github.com/pieterdd/RcloneShuttle/issues/7 is fixed.</p>
+    <p>Full host filesystem access is necessary to enable drag-and-drop until
+      https://github.com/pieterdd/RcloneShuttle/issues/7 is fixed.</p>
   </description>
-  
+
   <releases>
+    <release version="0.1.2" date="2024-06-05">
+      <description>
+        <ul>
+          <li>Revamp the job queue</li>
+          <li>Make rename operations asynchronous</li>
+          <li>UI improvements</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.1" date="2024-05-12">
       <description>
         <ul>
