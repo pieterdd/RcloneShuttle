@@ -21,22 +21,26 @@
   <screenshots>
     <screenshot type="default">
       <image>
-        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/browser.png</image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/7d4fcac9d9a68bdf5674f1b4c11fdd9e266eb18b/meta/screenshots/browser.png
+      </image>
       <caption>Browser (light theme)</caption>
     </screenshot>
     <screenshot>
       <image>
-        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/no-remotes.png</image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/7d4fcac9d9a68bdf5674f1b4c11fdd9e266eb18b/meta/screenshots/no-remotes.png
+      </image>
       <caption>Default settings (no remotes available)</caption>
     </screenshot>
     <screenshot>
       <image>
-        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/lock-screen.png</image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/7d4fcac9d9a68bdf5674f1b4c11fdd9e266eb18b/meta/screenshots/lock-screen.png
+      </image>
       <caption>Opening a password-protected Rclone config</caption>
     </screenshot>
     <screenshot>
       <image>
-        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/31e3d1612df09a563c4dfb7d1b581848a586ce1c/meta/screenshots/browser-dark.png</image>
+        https://raw.githubusercontent.com/pieterdd/RcloneShuttle/7d4fcac9d9a68bdf5674f1b4c11fdd9e266eb18b/meta/screenshots/browser-dark.png
+      </image>
       <caption>Browser (dark theme)</caption>
     </screenshot>
   </screenshots>
