@@ -84,6 +84,11 @@
   </description>
 
   <releases>
+    <release version="0.1.2-1" date="2024-06-08">
+      <description>
+        <p>Packaging changes to improve compliance with Flathub's best practices.</p>
+      </description>
+    </release>
     <release version="0.1.2" date="2024-06-05">
       <description>
         <ul>
