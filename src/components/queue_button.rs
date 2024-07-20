@@ -92,7 +92,7 @@ impl SimpleComponent for QueueButton {
         match message {
             Self::Input::JobsUpdated => {}
             Self::Input::DialogRequested => {
-                self.dialog.widget().present(&self.root);
+                self.dialog.widget().present(Some(&self.root));
             }
         }
     }

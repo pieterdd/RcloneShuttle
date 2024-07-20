@@ -69,12 +69,20 @@ impl SimpleComponent for UnlockView {
         sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
         let password_input = gtk::PasswordEntry::builder().build();
-        password_input.connect_changed(clone!(@strong sender => move |entry| {
-            sender.input(Self::Input::PasswordEdited(entry.text().into()));
-        }));
-        password_input.connect_activate(clone!(@strong sender => move |_| {
-            sender.input(Self::Input::PasswordSubmitRequested);
-        }));
+        password_input.connect_changed(clone!(
+            #[strong]
+            sender,
+            move |entry| {
+                sender.input(Self::Input::PasswordEdited(entry.text().into()));
+            }
+        ));
+        password_input.connect_activate(clone!(
+            #[strong]
+            sender,
+            move |_| {
+                sender.input(Self::Input::PasswordSubmitRequested);
+            }
+        ));
 
         let model = Self {
             password: String::from(""),

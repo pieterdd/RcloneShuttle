@@ -483,12 +483,12 @@ impl Component for App {
             .set_can_unselect(true);
         file_listing_view_wrapper
             .selection_model
-            .connect_selected_item_notify(clone!(@strong sender => move |_| {
+            .connect_selected_item_notify(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::FileListingSelectionChanged);
             }));
 
         let drop_target = DropTarget::new(FileList::static_type(), DragAction::COPY);
-        drop_target.connect_drop(clone!(@strong sender => move |_drop_target, value, _, _| {
+        drop_target.connect_drop(clone!(#[strong] sender, move |_drop_target, value, _, _| {
             let file_list = value.get::<FileList>().expect("Non-file dropped");
             let file_paths: Vec<PathBuf> =
                 file_list.files().iter().filter_map(|f| f.path()).collect();
@@ -535,56 +535,55 @@ impl Component for App {
         let widgets = view_output!();
 
         let app = relm4::main_application();
-        let window = &widgets.window;
         let rename_action: RelmAction<RenameAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::RenameKeyPressed);
             }))
         };
         let move_action: RelmAction<MoveAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::MoveKeyPressed);
             }))
         };
         let copy_action: RelmAction<CopyAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::CopyKeyPressed);
             }))
         };
         let delete_action: RelmAction<DeleteAction> = {
             RelmAction::new_stateless(
-                clone!(@strong sender, @strong file_listing_view, @strong window => move |_| {
-                                sender.input(Self::Input::DeleteSelectionRequested);
+                clone!(#[strong] sender, move |_| {
+                    sender.input(Self::Input::DeleteSelectionRequested);
                 }),
             )
         };
         let path_refresh_action: RelmAction<PathRefreshAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::PathRefreshRequested);
             }))
         };
         let path_parent_action: RelmAction<PathParentAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::PathParentRequested);
             }))
         };
         let path_undo_action: RelmAction<PathUndoAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::PathUndoRequested);
             }))
         };
         let path_redo_action: RelmAction<PathRedoAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::PathRedoRequested);
             }))
         };
         let remotes_refresh_action: RelmAction<RemotesRefreshAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::RemotesRefreshRequested);
             }))
         };
         let remotes_configure_action: RelmAction<RemotesConfigureAction> = {
-            RelmAction::new_stateless(clone!(@strong sender => move |_| {
+            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::RemotesConfigurationRequested);
             }))
         };
@@ -867,7 +866,7 @@ impl Component for App {
                 }).forward(sender.input_sender(), |msg| match msg {
                     StringPromptDialogOutMsg::InputSubmitted(folder_name) => AppInMsg::CreateFolderConfirmed(folder_name),
                 });
-                dialog.widget().present(root);
+                dialog.widget().present(Some(root));
                 self.active_string_prompt = Some(dialog);
             }
             Self::Input::CreateFolderConfirmed(folder_name) => {
@@ -981,7 +980,7 @@ impl Component for App {
                     }).forward(sender.input_sender(), move |msg| match msg {
                         StringPromptDialogOutMsg::InputSubmitted(new_filename) => Self::Input::RenameConfirmed(path.clone(), new_filename),
                     });
-                    dialog.widget().present(root);
+                    dialog.widget().present(Some(root));
                     self.active_string_prompt = Some(dialog);
                 }
             }
@@ -1017,7 +1016,7 @@ impl Component for App {
                     alert.connect_response(Some("delete"), move |_, _| {
                         sender.input(Self::Input::DeleteConfirmed(path.clone(), is_dir));
                     });
-                    alert.present(root);
+                    alert.present(Some(root));
                 }
             }
             Self::Input::DeleteConfirmed(path, is_dir) => {

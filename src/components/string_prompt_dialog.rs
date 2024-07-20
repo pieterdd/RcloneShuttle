@@ -85,9 +85,13 @@ impl Component for StringPromptDialog {
         let entry = gtk::Entry::builder()
             .text(init.default_value.unwrap_or(String::from("")))
             .build();
-        entry.connect_activate(clone!(@strong sender => move |_| {
-            sender.input(Self::Input::SubmitInput);
-        }));
+        entry.connect_activate(clone!(
+            #[strong]
+            sender,
+            move |_| {
+                sender.input(Self::Input::SubmitInput);
+            }
+        ));
         let model = Self {
             title: init.title,
             prompt: init.prompt,

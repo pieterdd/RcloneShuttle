@@ -61,14 +61,22 @@ impl RelmListItem for FileListingView {
         let (tx, rx) = relm4::channel::<FilePickerMode>();
         let is_dir_copy = self.model.is_dir;
         let initial_mode = FILE_PICKER_MODE.read();
-        relm4::spawn_local(clone!(@strong root => async move {
-            set_sensitivity(&root, &initial_mode, is_dir_copy);
-        }));
-        relm4::spawn_local(clone!(@strong root => async move {
-            while let Some(mode) = rx.recv().await {
-                set_sensitivity(&root, &mode, is_dir_copy);
+        relm4::spawn_local(clone!(
+            #[strong]
+            root,
+            async move {
+                set_sensitivity(&root, &initial_mode, is_dir_copy);
             }
-        }));
+        ));
+        relm4::spawn_local(clone!(
+            #[strong]
+            root,
+            async move {
+                while let Some(mode) = rx.recv().await {
+                    set_sensitivity(&root, &mode, is_dir_copy);
+                }
+            }
+        ));
         FILE_PICKER_MODE.subscribe(&tx, |f| f.clone());
 
         widgets.image.set_icon_name(Some(match self.model.is_dir {
