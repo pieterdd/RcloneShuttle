@@ -61,6 +61,7 @@
       <li>Upload files via drag and drop</li>
       <li>Rename, move, copy and delete files/folders</li>
       <li>Open remote files locally via double click</li>
+      <li>Permanently save a local copy of specific files/folders</li>
       <li>Handle encrypted Rclone configuration files</li>
     </ul>
     <p>

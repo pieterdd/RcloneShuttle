@@ -9,6 +9,7 @@ Rclone Shuttle can:
 - Upload files via drag and drop
 - Rename, move, copy and delete files/folders
 - Open remote files locally via double click
+- Permanently save a local copy of specific files/folders
 - Handle encrypted Rclone configuration files
 
 ![Screenshot](meta/screenshots/browser.png)
