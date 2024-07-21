@@ -1,5 +1,7 @@
 use std::fmt::Display;
 
+use regex::Regex;
+
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub struct RclonePath {
     inner: String,
@@ -22,14 +24,39 @@ impl RclonePath {
         if self.inner.ends_with(':') {
             return RclonePath::from(&self.inner);
         }
-        let mut parts: Vec<&str> = self
-            .inner
-            .split(|c| c == ':' || c == '/')
-            .filter(|s| s != &"")
-            .collect();
-        parts.remove(parts.len() - 1);
-
-        RclonePath::from(&(parts[0].to_owned() + ":" + &parts[1..].join("/")))
+        let windows_path_format = Regex::new(r"^[A-Za-z]:\\").unwrap();
+        if windows_path_format.is_match(&self.inner) {
+            // E.g. C:\
+            if self.inner.len() == 3 {
+                return self.clone();
+            }
+            let mut parts: Vec<&str> = self.inner[3..]
+                .split(|c| c == '\\')
+                .filter(|s| s != &"")
+                .collect();
+            parts.remove(parts.len() - 1);
+            RclonePath::from(&(self.inner[0..3].to_owned() + &parts.join(r"\")))
+        } else if self.inner == "/" {
+            // Local Unix root
+            self.clone()
+        } else if self.inner.starts_with("/") {
+            // Local Unix path
+            let mut parts: Vec<&str> = self
+                .inner
+                .split(|c| c == '/')
+                .filter(|s| s != &"")
+                .collect();
+            parts.remove(parts.len() - 1);
+            RclonePath::from(&("/".to_owned() + &parts.join("/")))
+        } else {
+            let mut parts: Vec<&str> = self
+                .inner
+                .split(|c| c == ':' || c == '/')
+                .filter(|s| s != &"")
+                .collect();
+            parts.remove(parts.len() - 1);
+            RclonePath::from(&(parts[0].to_owned() + ":" + &parts[1..].join("/")))
+        }
     }
 
     pub fn path_has_parent(&self) -> bool {
@@ -68,6 +95,7 @@ impl RclonePath {
 #[cfg(test)]
 mod tests {
     use crate::path_tools::RclonePath;
+    use test_case::test_case;
 
     #[test]
     fn path_has_parent_with_parent() {
@@ -105,6 +133,23 @@ mod tests {
     fn resolve_to_parent_folder_not_parent_level_3_without_slash() {
         let path = RclonePath::from("bla:foo/bar");
         assert_eq!(path.resolve_to_parent(), RclonePath::from("bla:foo"));
+    }
+
+    #[test_case("/", "/"; "top level")]
+    #[test_case("/home", "/"; "level 2")]
+    #[test_case("/home/foo/bar", "/home/foo"; "deeper than level 2")]
+    fn resolve_to_parent_folder_local_unix(raw_input: &str, raw_output: &str) {
+        let path = RclonePath::from(raw_input);
+        assert_eq!(path.resolve_to_parent(), RclonePath::from(raw_output));
+    }
+
+    #[test_case(r"C:\", r"C:\"; "top level")]
+    #[test_case(r"C:\Users", r"C:\"; "level 2 without slash")]
+    #[test_case(r"C:\Users\", r"C:\"; "level 2 with slash")]
+    #[test_case(r"C:\Users\foo\Desktop\bar.exe", r"C:\Users\foo\Desktop"; "deeper than level 2")]
+    fn resolve_to_parent_folder_local_windows(raw_input: &str, raw_output: &str) {
+        let path = RclonePath::from(raw_input);
+        assert_eq!(path.resolve_to_parent(), RclonePath::from(raw_output));
     }
 
     #[test]

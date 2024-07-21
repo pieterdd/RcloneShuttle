@@ -20,6 +20,10 @@ pub enum RcloneJobType {
         target_path: RclonePath,
     },
     Rename(RclonePath),
+    Download {
+        local_path: RclonePath,
+        remote_path: RclonePath,
+    },
     Delete(RclonePath),
     Open {
         remote_path: RclonePath,

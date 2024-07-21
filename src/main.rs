@@ -13,7 +13,7 @@ use client::{RcloneClient, RcloneFileListing};
 use components::queue_button::QueueButton;
 use components::string_prompt_dialog::{StringPromptDialog, StringPromptDialogInit, StringPromptDialogOutMsg};
 use config::AppConfig;
-use dirs::cache_dir;
+use dirs::{cache_dir, home_dir};
 use globals::JOBS;
 use model::{RcloneJob, RcloneJobType};
 use path_tools::RclonePath;
@@ -35,6 +35,7 @@ use relm4::RelmListBoxExt;
 use relm4::{adw, ComponentController};
 use relm4::{Component, RelmWidgetExt};
 use relm4_icons::icon_names;
+use relm4_components::save_dialog::{SaveDialog, SaveDialogMsg, SaveDialogResponse, SaveDialogSettings};
 use std::ffi::OsString;
 use std::ops::Deref;
 use std::path::PathBuf;
@@ -53,6 +54,7 @@ relm4::new_stateless_action!(PathRefreshAction, FileListingsViewGroup, "path_ref
 relm4::new_stateless_action!(MoveAction, FileListingsViewGroup, "move");
 relm4::new_stateless_action!(CopyAction, FileListingsViewGroup, "copy");
 relm4::new_stateless_action!(RenameAction, FileListingsViewGroup, "rename");
+relm4::new_stateless_action!(DownloadAction, FileListingsViewGroup, "download");
 relm4::new_stateless_action!(DeleteAction, FileListingsViewGroup, "delete");
 relm4::new_stateless_action!(PathParentAction, FileListingsViewGroup, "path_parent");
 relm4::new_stateless_action!(PathUndoAction, FileListingsViewGroup, "path_undo");
@@ -106,6 +108,9 @@ pub enum AppInMsg {
     DeleteConfirmed(RclonePath, bool),
     TriggerGenericError(String, String, bool),
     FilePickerModeChange(FilePickerMode),
+    DownloadRequested,
+    DownloadPathConfirmed(RclonePath),
+    NoOperation,
 }
 
 #[derive(Debug)]
@@ -135,6 +140,7 @@ struct App {
     requires_password: bool,
     selected_file_listing_copy: Option<RcloneFileListing>,
     active_string_prompt: Option<Controller<StringPromptDialog>>,
+    save_copy_dialog: Option<Controller<SaveDialog>>,
 }
 
 impl App {
@@ -454,6 +460,7 @@ impl Component for App {
             "Rename" => RenameAction,
             "Move" => MoveAction,
             "Copy" => CopyAction,
+            "Download" => DownloadAction,
             "Delete" => DeleteAction,
         }
     }
@@ -528,6 +535,7 @@ impl Component for App {
             requires_password,
             selected_file_listing_copy: None,
             active_string_prompt: None,
+            save_copy_dialog: None,
         };
         let remotes_view = model.remotes_view_wrapper.widget();
         let file_listing_view = &model.file_listing_view_wrapper.view;
@@ -549,6 +557,13 @@ impl Component for App {
             RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
                 sender.input(Self::Input::CopyKeyPressed);
             }))
+        };
+        let save_copy_action: RelmAction<DownloadAction> = {
+            RelmAction::new_stateless(
+                clone!(#[strong] sender, move |_| {
+                    sender.input(Self::Input::DownloadRequested);
+                }),
+            )
         };
         let delete_action: RelmAction<DeleteAction> = {
             RelmAction::new_stateless(
@@ -591,6 +606,7 @@ impl Component for App {
         app.set_accelerators_for_action::<RenameAction>(&["F2"]);
         app.set_accelerators_for_action::<MoveAction>(&["F6"]);
         app.set_accelerators_for_action::<CopyAction>(&["F7"]);
+        app.set_accelerators_for_action::<DownloadAction>(&["<Ctrl>S"]);
         app.set_accelerators_for_action::<DeleteAction>(&["<Shift>Delete"]);
         app.set_accelerators_for_action::<PathRefreshAction>(&["F5"]);
         app.set_accelerators_for_action::<PathParentAction>(&["<Alt>Up"]);
@@ -601,6 +617,7 @@ impl Component for App {
         file_listings_view_group.add_action(rename_action);
         file_listings_view_group.add_action(move_action);
         file_listings_view_group.add_action(copy_action);
+        file_listings_view_group.add_action(save_copy_action);
         file_listings_view_group.add_action(delete_action);
         file_listings_view_group.add_action(path_refresh_action);
         file_listings_view_group.add_action(path_parent_action);
@@ -1056,6 +1073,55 @@ impl Component for App {
                         .set_selected(GTK_INVALID_LIST_POSITION);
                 }
             },
+            Self::Input::DownloadRequested => {
+                let dialog = SaveDialog::builder().transient_for_native(&root).launch(SaveDialogSettings::default()).forward(sender.input_sender(), |response| match response {
+                    SaveDialogResponse::Accept(path) => Self::Input::DownloadPathConfirmed(RclonePath::from(&path.into_os_string().into_string().unwrap())),
+                    SaveDialogResponse::Cancel => Self::Input::NoOperation,
+                });
+                let mut target_directory: Option<PathBuf> = None;
+                if let Some(home_path) = home_dir() {
+                    let desktop_path = home_path.join("Desktop");
+                    if desktop_path.exists() {
+                        target_directory = Some(desktop_path);
+                    } else {
+                        target_directory = Some(home_path);
+                    }
+                }                let position = self.file_listing_view_wrapper.selection_model.selected();
+                if let Some(item) = self.file_listing_view_wrapper.get(position) {
+                    let selected_remote_item_path = item.borrow().model.path.clone();
+                    if let Some(target_directory_unwrapped) = target_directory {
+                        dialog.emit(SaveDialogMsg::SaveAs(target_directory_unwrapped.join(selected_remote_item_path.filename()).into_os_string().into_string().unwrap()));
+                    } else {
+                        dialog.emit(SaveDialogMsg::SaveAs(selected_remote_item_path.filename()));
+                    }
+
+                    self.save_copy_dialog = Some(dialog);
+                }
+            },
+            Self::Input::DownloadPathConfirmed(local_path) => {
+                let position = self.file_listing_view_wrapper.selection_model.selected();
+                if let Some(item) = self.file_listing_view_wrapper.get(position) {
+                    let remote_path = item.borrow().model.path.clone();
+
+                    let client = self.client.clone();
+                    let job = RcloneJob::new(RcloneJobType::Download {
+                        remote_path: remote_path.clone(),
+                        local_path: local_path.clone(),
+                    });
+                    let uuid = job.uuid;
+                    JOBS.write().insert(job.uuid, job);
+                    sender.spawn_oneshot_command(move || {
+                        let result = match client.as_ref().unwrap().copy(&remote_path, &local_path) {
+                            Ok(()) => AppOutCmd::JobUpdated(uuid, RcloneJobStatus::Finished),
+                            Err(error_str) => {
+                                AppOutCmd::JobUpdated(uuid, RcloneJobStatus::Failed(error_str))
+                            }
+                        };
+                        result
+                    });
+                }
+            },
+            Self::Input::NoOperation => {},
         }
     }
 

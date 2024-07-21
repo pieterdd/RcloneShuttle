@@ -37,3 +37,8 @@ dirs = "5.0.1"
 open = "5.1.2"
 size_format = "1.0.2"
 confy = "0.6.1"
+relm4-components = { version = "0.9.1", features = ["libadwaita"] }
+regex = "1.10.5"
+
+[dev-dependencies]
+test-case = "3.3.1"
