@@ -84,6 +84,14 @@
   </description>
 
   <releases>
+    <release version="0.1.4" date="2024-07-21">
+      <description>
+        <ul>
+          <li>Implement downloading of remote files/folders to chosen location</li>
+          <li>Upgrade to Relm4 v0.9.0</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.2-1" date="2024-06-08">
       <description>
         <p>Packaging changes to improve compliance with Flathub's best practices.</p>
