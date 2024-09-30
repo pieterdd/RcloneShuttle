@@ -11,6 +11,11 @@ exclude = [
 description = "Upload your files to anywhere"
 license = "GPL-3.0-or-later"
 
+[package.metadata.winres]
+ProductName = "Rclone Shuttle"
+FileDescription = "File browser for Rclone"
+OriginalFilename = "rclone-shuttle.exe"
+
 [package.metadata.generate-rpm]
 assets = [
     { source = "target/release/rclone-shuttle", dest = "/usr/bin/rclone-shuttle", mode = "0755" },
@@ -23,6 +28,9 @@ gtk4 = ">= 4.14.3"
 rclone = ">= 1.66"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1.12"
 
 [dependencies]
 chrono = "0.4.34"

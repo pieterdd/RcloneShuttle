@@ -1,3 +1,7 @@
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
 use crate::client::MkdirError;
 use crate::components::file_listing_view::FileListingView;
 use crate::components::remote_view::RemoteView;

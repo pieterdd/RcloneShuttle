@@ -158,7 +158,7 @@ dependencies = [
  "directories",
  "serde",
  "thiserror",
- "toml",
+ "toml 0.8.15",
 ]
 
 [[package]]
@@ -1149,6 +1149,7 @@ dependencies = [
  "test-case",
  "time",
  "uuid",
+ "winres",
 ]
 
 [[package]]
@@ -1244,7 +1245,7 @@ dependencies = [
  "gtk4",
  "gvdb",
  "serde",
- "toml",
+ "toml 0.8.15",
 ]
 
 [[package]]
@@ -1447,7 +1448,7 @@ dependencies = [
  "cfg-expr",
  "heck",
  "pkg-config",
- "toml",
+ "toml 0.8.15",
  "version-compare",
 ]
 
@@ -1550,6 +1551,15 @@ dependencies = [
  "backtrace",
  "num_cpus",
  "pin-project-lite",
+]
+
+[[package]]
+name = "toml"
+version = "0.5.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
@@ -1945,6 +1955,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d90f4e0f530c4c69f62b80d839e9ef3855edc9cba471a160c4d692deed62b401"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "winres"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b68db261ef59e9e52806f688020631e987592bd83619edccda9c47d42cde4f6c"
+dependencies = [
+ "toml 0.5.11",
 ]
 
 [[package]]
