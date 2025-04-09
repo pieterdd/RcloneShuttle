@@ -17,7 +17,7 @@ use client::{RcloneClient, RcloneFileListing};
 use components::queue_button::QueueButton;
 use components::string_prompt_dialog::{StringPromptDialog, StringPromptDialogInit, StringPromptDialogOutMsg};
 use config::AppConfig;
-use dirs::{cache_dir, home_dir};
+use dirs::cache_dir;
 use globals::JOBS;
 use model::{RcloneJob, RcloneJobType};
 use path_tools::RclonePath;
@@ -1082,22 +1082,10 @@ impl Component for App {
                     SaveDialogResponse::Accept(path) => Self::Input::DownloadPathConfirmed(RclonePath::from(&path.into_os_string().into_string().unwrap())),
                     SaveDialogResponse::Cancel => Self::Input::NoOperation,
                 });
-                let mut target_directory: Option<PathBuf> = None;
-                if let Some(home_path) = home_dir() {
-                    let desktop_path = home_path.join("Desktop");
-                    if desktop_path.exists() {
-                        target_directory = Some(desktop_path);
-                    } else {
-                        target_directory = Some(home_path);
-                    }
-                }                let position = self.file_listing_view_wrapper.selection_model.selected();
+                let position = self.file_listing_view_wrapper.selection_model.selected();
                 if let Some(item) = self.file_listing_view_wrapper.get(position) {
                     let selected_remote_item_path = item.borrow().model.path.clone();
-                    if let Some(target_directory_unwrapped) = target_directory {
-                        dialog.emit(SaveDialogMsg::SaveAs(target_directory_unwrapped.join(selected_remote_item_path.filename()).into_os_string().into_string().unwrap()));
-                    } else {
-                        dialog.emit(SaveDialogMsg::SaveAs(selected_remote_item_path.filename()));
-                    }
+                    dialog.emit(SaveDialogMsg::SaveAs(selected_remote_item_path.filename()));
 
                     self.save_copy_dialog = Some(dialog);
                 }
