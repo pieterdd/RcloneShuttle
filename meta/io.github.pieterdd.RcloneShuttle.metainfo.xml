@@ -85,6 +85,16 @@
   </description>
 
   <releases>
+    <release version="0.1.5" date="2025-04-09">
+      <description>
+        <ul>
+          <li>Stop prefixing filename with path in save dialog for better compatibility with newer GNOME versions</li>
+          <li>Upgrade time library for compatibility with Rust v1.8.0+</li>
+          <li>Update to Relm4 v0.9.1</li>
+          <li>Apply security patch for tokio</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.4" date="2024-07-21">
       <description>
         <ul>
