@@ -1,3 +1,4 @@
+use crate::icons::icon_names;
 use adw::glib::clone;
 use relm4::adw;
 use relm4::gtk::prelude::{BoxExt, ButtonExt, EditableExt, OrientableExt, WidgetExt};
@@ -5,7 +6,6 @@ use relm4::gtk::{self};
 use relm4::ComponentParts;
 use relm4::ComponentSender;
 use relm4::SimpleComponent;
-use relm4_icons::icon_names;
 
 #[derive(Debug, Default)]
 pub struct UnlockView {
