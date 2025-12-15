@@ -8,21 +8,24 @@ use crate::components::remote_view::RemoteView;
 use crate::components::unlock_view::{UnlockView, UnlockViewInMsg, UnlockViewOutMsg};
 use crate::globals::FILE_PICKER_MODE;
 use crate::gtk::DropTarget;
+use crate::icons::icon_names;
 use crate::model::{FilePickerMode, RcloneJobStatus};
 use adw::gio::Cancellable;
 use adw::glib::clone;
 use adw::gtk::ffi::GTK_INVALID_LIST_POSITION;
-use adw::prelude::{ButtonExt, EditableExt, AdwDialogExt};
+use adw::prelude::{AdwDialogExt, ButtonExt, EditableExt};
 use client::{RcloneClient, RcloneFileListing};
 use components::queue_button::QueueButton;
-use components::string_prompt_dialog::{StringPromptDialog, StringPromptDialogInit, StringPromptDialogOutMsg};
+use components::string_prompt_dialog::{
+    StringPromptDialog, StringPromptDialogInit, StringPromptDialogOutMsg,
+};
 use config::AppConfig;
 use dirs::cache_dir;
 use globals::JOBS;
 use model::{RcloneJob, RcloneJobType};
 use path_tools::RclonePath;
 use relm4::actions::{AccelsPlus, RelmAction, RelmActionGroup};
-use relm4::adw::prelude::{NavigationPageExt, AlertDialogExt};
+use relm4::adw::prelude::{AlertDialogExt, NavigationPageExt};
 use relm4::adw::ToolbarStyle;
 use relm4::factory::FactoryVecDeque;
 use relm4::gtk::gdk::{DragAction, FileList};
@@ -38,18 +41,20 @@ use relm4::RelmApp;
 use relm4::RelmListBoxExt;
 use relm4::{adw, ComponentController};
 use relm4::{Component, RelmWidgetExt};
-use relm4_icons::icon_names;
-use relm4_components::save_dialog::{SaveDialog, SaveDialogMsg, SaveDialogResponse, SaveDialogSettings};
+use relm4_components::save_dialog::{
+    SaveDialog, SaveDialogMsg, SaveDialogResponse, SaveDialogSettings,
+};
 use std::ffi::OsString;
 use std::ops::Deref;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
 
-mod config;
 mod client;
 mod components;
+mod config;
 mod globals;
+mod icons;
 mod model;
 mod path_tools;
 
@@ -396,7 +401,7 @@ impl Component for App {
                                                             },
                                                         }
                                                     },
-                                                    
+
                                                     gtk::MenuButton {
                                                         set_label: "Edit",
                                                         set_menu_model: Some(&file_listing_actions),
@@ -494,18 +499,26 @@ impl Component for App {
             .set_can_unselect(true);
         file_listing_view_wrapper
             .selection_model
-            .connect_selected_item_notify(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::FileListingSelectionChanged);
-            }));
+            .connect_selected_item_notify(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::FileListingSelectionChanged);
+                }
+            ));
 
         let drop_target = DropTarget::new(FileList::static_type(), DragAction::COPY);
-        drop_target.connect_drop(clone!(#[strong] sender, move |_drop_target, value, _, _| {
-            let file_list = value.get::<FileList>().expect("Non-file dropped");
-            let file_paths: Vec<PathBuf> =
-                file_list.files().iter().filter_map(|f| f.path()).collect();
-            sender.input(Self::Input::FilesDropped(file_paths));
-            true
-        }));
+        drop_target.connect_drop(clone!(
+            #[strong]
+            sender,
+            move |_drop_target, value, _, _| {
+                let file_list = value.get::<FileList>().expect("Non-file dropped");
+                let file_paths: Vec<PathBuf> =
+                    file_list.files().iter().filter_map(|f| f.path()).collect();
+                sender.input(Self::Input::FilesDropped(file_paths));
+                true
+            }
+        ));
 
         let rclone_config_file = std::env::var("RCLONE_CONFIG_FILE").ok();
         let mut requires_password = true;
@@ -548,63 +561,103 @@ impl Component for App {
 
         let app = relm4::main_application();
         let rename_action: RelmAction<RenameAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::RenameKeyPressed);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::RenameKeyPressed);
+                }
+            ))
         };
         let move_action: RelmAction<MoveAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::MoveKeyPressed);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::MoveKeyPressed);
+                }
+            ))
         };
         let copy_action: RelmAction<CopyAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::CopyKeyPressed);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::CopyKeyPressed);
+                }
+            ))
         };
         let save_copy_action: RelmAction<DownloadAction> = {
-            RelmAction::new_stateless(
-                clone!(#[strong] sender, move |_| {
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
                     sender.input(Self::Input::DownloadRequested);
-                }),
-            )
+                }
+            ))
         };
         let delete_action: RelmAction<DeleteAction> = {
-            RelmAction::new_stateless(
-                clone!(#[strong] sender, move |_| {
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
                     sender.input(Self::Input::DeleteSelectionRequested);
-                }),
-            )
+                }
+            ))
         };
         let path_refresh_action: RelmAction<PathRefreshAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::PathRefreshRequested);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::PathRefreshRequested);
+                }
+            ))
         };
         let path_parent_action: RelmAction<PathParentAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::PathParentRequested);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::PathParentRequested);
+                }
+            ))
         };
         let path_undo_action: RelmAction<PathUndoAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::PathUndoRequested);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::PathUndoRequested);
+                }
+            ))
         };
         let path_redo_action: RelmAction<PathRedoAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::PathRedoRequested);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::PathRedoRequested);
+                }
+            ))
         };
         let remotes_refresh_action: RelmAction<RemotesRefreshAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::RemotesRefreshRequested);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::RemotesRefreshRequested);
+                }
+            ))
         };
         let remotes_configure_action: RelmAction<RemotesConfigureAction> = {
-            RelmAction::new_stateless(clone!(#[strong] sender, move |_| {
-                sender.input(Self::Input::RemotesConfigurationRequested);
-            }))
+            RelmAction::new_stateless(clone!(
+                #[strong]
+                sender,
+                move |_| {
+                    sender.input(Self::Input::RemotesConfigurationRequested);
+                }
+            ))
         };
 
         app.set_accelerators_for_action::<RenameAction>(&["F2"]);
@@ -666,9 +719,9 @@ impl Component for App {
                 // preselected properly in the GUI
                 self.client = Some(client);
                 self.refresh_remotes(&sender);
-                
+
                 let mut config = AppConfig::load();
-                
+
                 if !config.skip_overwrite_disclaimer {
                     let dialog = gtk::AlertDialog::builder()
                         .buttons(["OK", "Don't show again"])
@@ -997,7 +1050,7 @@ impl Component for App {
                         title: format!("Rename '{}'", path.filename()),
                         prompt: String::from("Enter a new name to proceed."),
                         default_value: Some(path.filename()),
-                        submit_label: String::from("Confirm"), 
+                        submit_label: String::from("Confirm"),
                     }).forward(sender.input_sender(), move |msg| match msg {
                         StringPromptDialogOutMsg::InputSubmitted(new_filename) => Self::Input::RenameConfirmed(path.clone(), new_filename),
                     });
@@ -1172,6 +1225,6 @@ impl Component for App {
 
 fn main() {
     let app = RelmApp::new("io.github.pieterdd.RcloneShuttle");
-    relm4_icons::initialize_icons();
+    relm4_icons::initialize_icons(icon_names::GRESOURCE_BYTES, icon_names::RESOURCE_PREFIX);
     app.run::<App>(());
 }

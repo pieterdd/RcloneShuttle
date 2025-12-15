@@ -1,4 +1,5 @@
 use crate::globals::JOBS;
+use crate::icons::icon_names;
 use crate::model::{get_ongoing_jobs, has_failed_jobs};
 use relm4::adw::prelude::AdwDialogExt;
 use relm4::gtk::prelude::{BoxExt, ButtonExt, WidgetExt};
@@ -7,7 +8,6 @@ use relm4::SimpleComponent;
 use relm4::{Component, ComponentSender};
 use relm4::{ComponentController, Controller};
 use relm4::{ComponentParts, RelmWidgetExt};
-use relm4_icons::icon_names;
 
 use super::queue_dialog::QueueDialog;
 

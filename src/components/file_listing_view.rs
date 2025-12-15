@@ -2,12 +2,12 @@ use crate::client::RcloneFileListing;
 use crate::globals::FILE_PICKER_MODE;
 use crate::model::FilePickerMode;
 
+use crate::icons::icon_names;
 use relm4::adw::glib::clone;
 use relm4::gtk::prelude::{BoxExt, WidgetExt};
 use relm4::gtk::{self};
 use relm4::typed_view::list::RelmListItem;
 use relm4::RelmWidgetExt;
-use relm4_icons::icon_names;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct FileListingView {

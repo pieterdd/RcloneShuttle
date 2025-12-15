@@ -1,10 +1,10 @@
 use crate::globals::JOBS;
+use crate::icons::icon_names;
 use crate::model::{RcloneJob, RcloneJobStatus, RcloneJobType};
 use relm4::adw;
 use relm4::adw::prelude::{ActionRowExt, ButtonExt, ListBoxRowExt, PreferencesRowExt, WidgetExt};
 use relm4::factory::{DynamicIndex, FactoryComponent};
 use relm4::{gtk, FactorySender};
-use relm4_icons::icon_names;
 use uuid::Uuid;
 
 #[derive(Debug)]
