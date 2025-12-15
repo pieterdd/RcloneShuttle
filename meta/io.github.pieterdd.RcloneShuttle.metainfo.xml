@@ -49,10 +49,6 @@
 
   <description>
     <p>
-      (Rclone Shuttle is still experimental. If you prefer a more mature but unmaintained
-      alternative, we recommend Rclone Browser.)
-    </p>
-    <p>
       Access all your cloud storage providers from one app. Powered by Rclone's superb command line
       tool, Rclone Shuttle lets you browse your files wherever they are hosted.
     </p>
@@ -85,6 +81,13 @@
   </description>
 
   <releases>
+    <release version="0.1.6" date="2025-12-15">
+        <description>
+        <ul>
+            <li>Update to Relm4 v0.10</li>
+        </ul>
+        </description>
+    </release>
     <release version="0.1.5" date="2025-04-09">
       <description>
         <ul>
