@@ -312,7 +312,7 @@ impl Component for App {
                                                 }
                                             }
                                             FileListingViewState::Loaded => {
-                                                &gtk::Box {
+                                                &gtk::ScrolledWindow {
                                                     #[local_ref]
                                                     file_listing_view -> gtk::ListView {
                                                         set_hexpand: true,
