@@ -58,6 +58,8 @@ mod icons;
 mod model;
 mod path_tools;
 
+const APP_ID: &str = "io.github.pieterdd.RcloneShuttle";
+
 relm4::new_action_group!(FileListingsViewGroup, "file_listings_view");
 relm4::new_stateless_action!(PathRefreshAction, FileListingsViewGroup, "path_refresh");
 relm4::new_stateless_action!(MoveAction, FileListingsViewGroup, "move");
@@ -80,6 +82,7 @@ relm4::new_stateless_action!(
     MainWindowMenuViewGroup,
     "remotes_configure"
 );
+relm4::new_stateless_action!(AboutAction, MainWindowMenuViewGroup, "about");
 
 #[derive(Debug)]
 pub enum AppInMsg {
@@ -462,8 +465,13 @@ impl Component for App {
 
     menu! {
         main_menu: {
-            "Refresh remotes" => RemotesRefreshAction,
-            "Configure remotes" => RemotesConfigureAction,
+            section! {
+                "Refresh remotes" => RemotesRefreshAction,
+                "Configure remotes" => RemotesConfigureAction,
+            },
+            section! {
+                "About" => AboutAction,
+            }
         },
         file_listing_actions: {
             "Rename" => RenameAction,
@@ -659,6 +667,17 @@ impl Component for App {
                 }
             ))
         };
+        let cloned_root = root.clone();
+        let about_action: RelmAction<AboutAction> = RelmAction::new_stateless(move |_| {
+            let dialog = adw::AboutDialog::builder()
+                .application_name("Stretch Break")
+                .application_icon(APP_ID)
+                .developer_name("pieterdd")
+                .version(env!("CARGO_PKG_VERSION"))
+                .website("https://github.com/pieterdd/StretchBreak/")
+                .build();
+            dialog.present(Some(&cloned_root));
+        });
 
         app.set_accelerators_for_action::<RenameAction>(&["F2"]);
         app.set_accelerators_for_action::<MoveAction>(&["F6"]);
@@ -685,6 +704,7 @@ impl Component for App {
         let mut main_menu_group = RelmActionGroup::<MainWindowMenuViewGroup>::new();
         main_menu_group.add_action(remotes_refresh_action);
         main_menu_group.add_action(remotes_configure_action);
+        main_menu_group.add_action(about_action);
         main_menu_group.register_for_widget(&widgets.window);
 
         FILE_PICKER_MODE.subscribe(sender.input_sender(), |new_mode| {
@@ -1224,7 +1244,7 @@ impl Component for App {
 }
 
 fn main() {
-    let app = RelmApp::new("io.github.pieterdd.RcloneShuttle");
+    let app = RelmApp::new(APP_ID);
     relm4_icons::initialize_icons(icon_names::GRESOURCE_BYTES, icon_names::RESOURCE_PREFIX);
     app.run::<App>(());
 }
