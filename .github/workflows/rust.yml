@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
@@ -15,7 +15,9 @@ jobs:
     container: archlinux:latest
 
     steps:
-    - uses: actions/checkout@v4
-    - run: pacman -Syu --noconfirm gtk4 gcc glib2-devel libadwaita rust pkgconf
-    - name: Run tests
-      run: cargo test
+      - uses: actions/checkout@v4
+      - run: pacman -Syu --noconfirm gtk4 gcc glib2-devel libadwaita rust pkgconf
+      - name: Check lock file
+        run: cargo check --locked
+      - name: Run tests
+        run: cargo test
