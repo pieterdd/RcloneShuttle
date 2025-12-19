@@ -159,7 +159,7 @@ impl Component for QueueDialog {
                 let mut new_jobs = BTreeMap::new();
                 for job in JOBS.read().iter() {
                     if job.1.status == RcloneJobStatus::Ongoing {
-                        new_jobs.insert(job.0.clone(), job.1.clone());
+                        new_jobs.insert(*job.0, job.1.clone());
                     }
                 }
                 *JOBS.write() = new_jobs;
