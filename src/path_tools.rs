@@ -31,7 +31,7 @@ impl RclonePath {
                 return self.clone();
             }
             let mut parts: Vec<&str> = self.inner[3..]
-                .split(|c| c == '\\')
+                .split('\\')
                 .filter(|s| s != &"")
                 .collect();
             parts.remove(parts.len() - 1);
@@ -43,7 +43,7 @@ impl RclonePath {
             // Local Unix path
             let mut parts: Vec<&str> = self
                 .inner
-                .split(|c| c == '/')
+                .split('/')
                 .filter(|s| s != &"")
                 .collect();
             parts.remove(parts.len() - 1);
@@ -51,7 +51,7 @@ impl RclonePath {
         } else {
             let mut parts: Vec<&str> = self
                 .inner
-                .split(|c| c == ':' || c == '/')
+                .split([':', '/'])
                 .filter(|s| s != &"")
                 .collect();
             parts.remove(parts.len() - 1);

@@ -1151,7 +1151,7 @@ impl Component for App {
                 }
             },
             Self::Input::DownloadRequested => {
-                let dialog = SaveDialog::builder().transient_for_native(&root).launch(SaveDialogSettings::default()).forward(sender.input_sender(), |response| match response {
+                let dialog = SaveDialog::builder().transient_for_native(root).launch(SaveDialogSettings::default()).forward(sender.input_sender(), |response| match response {
                     SaveDialogResponse::Accept(path) => Self::Input::DownloadPathConfirmed(RclonePath::from(&path.into_os_string().into_string().unwrap())),
                     SaveDialogResponse::Cancel => Self::Input::NoOperation,
                 });

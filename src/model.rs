@@ -73,7 +73,6 @@ pub fn has_failed_jobs() -> bool {
     JOBS.read()
         .values()
         .filter(|&j| matches!(j.status, RcloneJobStatus::Failed(_)))
-        .cloned()
         .count()
         > 0
 }
