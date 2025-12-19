@@ -81,6 +81,15 @@
   </description>
 
   <releases>
+    <release version="0.1.7" date="2025-12-19">
+        <description>
+        <ul>
+            <li>Fixed: blank space when scrolling through big file listings</li>
+            <li>Flatpak: update to Rclone v1.72.1</li>
+            <li>Add about screen</li>
+        </ul>
+        </description>
+    </release>
     <release version="0.1.6" date="2025-12-15">
         <description>
         <ul>

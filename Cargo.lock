@@ -1067,7 +1067,7 @@ dependencies = [
 
 [[package]]
 name = "rclone-shuttle"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "chrono",
  "confy",
