@@ -25,14 +25,14 @@ use globals::JOBS;
 use model::{RcloneJob, RcloneJobType};
 use path_tools::RclonePath;
 use relm4::actions::{AccelsPlus, RelmAction, RelmActionGroup};
-use relm4::adw::prelude::{AlertDialogExt, NavigationPageExt};
+use relm4::adw::prelude::{AdwApplicationWindowExt, AlertDialogExt, NavigationPageExt};
 use relm4::adw::ToolbarStyle;
 use relm4::factory::FactoryVecDeque;
 use relm4::gtk::gdk::{DragAction, FileList};
 use relm4::gtk::prelude::{
     BoxExt, EntryExt, FileExt, GtkWindowExt, OrientableExt, StaticType, WidgetExt,
 };
-use relm4::gtk::{self};
+use relm4::gtk::{self, glib};
 use relm4::typed_view::list::TypedListView;
 use relm4::ComponentParts;
 use relm4::ComponentSender;
@@ -122,6 +122,8 @@ pub enum AppInMsg {
     FilePickerModeChange(FilePickerMode),
     DownloadRequested,
     DownloadPathConfirmed(RclonePath),
+    RevealSidebar,
+    SplitCollapsed(bool),
     NoOperation,
 }
 
@@ -153,6 +155,8 @@ struct App {
     selected_file_listing_copy: Option<RcloneFileListing>,
     active_string_prompt: Option<Controller<StringPromptDialog>>,
     save_copy_dialog: Option<Controller<SaveDialog>>,
+    split_collapsed: bool,
+    reveal_files_on_small_screens: bool,
 }
 
 impl App {
@@ -186,14 +190,34 @@ impl Component for App {
             set_title: Some("Rclone Shuttle"),
             set_default_size: (800, 600),
 
+            add_breakpoint = adw::Breakpoint::new(adw::BreakpointCondition::new_length(
+                adw::BreakpointConditionLengthType::MaxWidth,
+                500.0,
+                adw::LengthUnit::Sp,
+            )) {
+                add_setter: (
+                    &split_view,
+                    "collapsed",
+                    Some(&glib::Value::from(&true))
+                )
+            },
             adw::ToolbarView {
                 set_top_bar_style: ToolbarStyle::Raised,
                 add_top_bar = &adw::HeaderBar {
-                    pack_start = &gtk::MenuButton {
-                        set_icon_name: icon_names::MENU,
-                        set_tooltip_text: Some("Menu"),
-                        #[wrap(Some)]
-                        set_popover = &gtk::PopoverMenu::from_model(Some(&main_menu)) {}
+                    pack_start = &gtk::Box {
+                        gtk::Button {
+                            #[watch]
+                            set_visible: model.reveal_files_on_small_screens && model.split_collapsed,
+                            set_icon_name: icon_names::LEAFLET,
+                            set_tooltip_text: Some("Open sidebar"),
+                            connect_clicked => Self::Input::RevealSidebar,
+                        },
+                        gtk::MenuButton {
+                            set_icon_name: icon_names::MENU,
+                            set_tooltip_text: Some("Menu"),
+                            #[wrap(Some)]
+                            set_popover = &gtk::PopoverMenu::from_model(Some(&main_menu)) {}
+                        }
                     }
                 },
 
@@ -216,7 +240,13 @@ impl Component for App {
                             set_icon_name: Some(icon_names::INFO_OUTLINE),
                         }
                     } else {
+                        #[name = "split_view"]
                         adw::NavigationSplitView {
+                            #[watch]
+                            set_show_content: model.reveal_files_on_small_screens,
+                            connect_collapsed_notify[sender] => move |value| {
+                                sender.input(Self::Input::SplitCollapsed(value.is_collapsed()));
+                            },
                             #[wrap(Some)]
                             set_sidebar = &adw::NavigationPage {
                                 set_title: "Remotes",
@@ -561,6 +591,8 @@ impl Component for App {
             selected_file_listing_copy: None,
             active_string_prompt: None,
             save_copy_dialog: None,
+            reveal_files_on_small_screens: false,
+            split_collapsed: false,
         };
         let remotes_view = model.remotes_view_wrapper.widget();
         let file_listing_view = &model.file_listing_view_wrapper.view;
@@ -771,6 +803,7 @@ impl Component for App {
                 dialog.show(Some(root));
             }
             Self::Input::RemoteSelectionChanged(row) => {
+                self.reveal_files_on_small_screens = true;
                 let raw_path = self.remotes_view_wrapper.get(row).unwrap().name.clone();
                 let path = RclonePath::from(&raw_path);
                 if path != self.path {
@@ -1186,6 +1219,12 @@ impl Component for App {
                     });
                 }
             },
+            Self::Input::RevealSidebar => {
+                self.reveal_files_on_small_screens = false;
+            }
+            Self::Input::SplitCollapsed(value) => {
+                self.split_collapsed = value;
+            }
             Self::Input::NoOperation => {},
         }
     }
