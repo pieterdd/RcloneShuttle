@@ -29,6 +29,7 @@ fn main() {
             "info-outline",
             "minus-circle-filled",
             "brush",
+            "leaflet",
         ],
     );
 }
