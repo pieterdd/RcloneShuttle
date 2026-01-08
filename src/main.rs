@@ -809,8 +809,8 @@ impl Component for App {
                 if path != self.path {
                     self.undoable_paths.push(self.path.clone());
                     self.redoable_paths.clear();
+                    sender.input(Self::Input::PathChanged(path));
                 }
-                sender.input(Self::Input::PathChanged(path));
             }
             Self::Input::PathRefreshRequested => {
                 sender.input(Self::Input::PathChanged(self.path.clone()));
