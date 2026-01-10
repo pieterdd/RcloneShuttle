@@ -46,6 +46,7 @@
   </screenshots>
 
   <url type="homepage">https://github.com/pieterdd/RcloneShuttle</url>
+  <url type="vcs-browser">https://github.com/pieterdd/RcloneShuttle</url>
 
   <description>
     <p>
@@ -81,6 +82,11 @@
   </description>
 
   <releases>
+    <release version="0.1.8" date="2026-01-10">
+        <description>
+            <p>Improve compatibility with small screens</p>
+        </description>
+    </release>
     <release version="0.1.7" date="2025-12-19">
         <description>
         <ul>
