@@ -73,7 +73,6 @@ impl Component for QueueDialog {
                     set_margin_all: 20,
                     set_margin_top: 0,
                     set_spacing: 20,
-                    set_width_request: 500,
 
                     #[local_ref]
                     ongoing_queue_view -> adw::PreferencesGroup {
@@ -106,6 +105,7 @@ impl Component for QueueDialog {
                             set_sensitive: !model.terminated_queue_wrapper.is_empty(),
                             set_tooltip_text: Some("Clear terminated jobs"),
                             connect_clicked => Self::Input::CleanNonOngoingJobs,
+                            set_margin_start: 10,
                         },
 
                         add = &adw::PreferencesRow {
