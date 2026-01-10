@@ -147,4 +147,14 @@
   </releases>
 
   <launchable type="desktop-id">io.github.pieterdd.RcloneShuttle.desktop</launchable>
+
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </recommends>
+
+  <requires>
+    <display_length compare="ge">410</display_length>
+  </requires>
 </component>
