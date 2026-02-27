@@ -82,6 +82,15 @@
   </description>
 
   <releases>
+    <release version="0.1.9" date="2026-02-27">
+        <description>
+        <ul>
+            <li>Avoid refreshing directory if path didn't change</li>
+            <li>Update various libraries</li>
+            <li>Flatpak: update to Rclone v1.73.1</li>
+        </ul>
+        </description>
+    </release>
     <release version="0.1.8" date="2026-01-10">
         <description>
             <p>Improve compatibility with small screens</p>
