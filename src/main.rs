@@ -702,11 +702,11 @@ impl Component for App {
         let cloned_root = root.clone();
         let about_action: RelmAction<AboutAction> = RelmAction::new_stateless(move |_| {
             let dialog = adw::AboutDialog::builder()
-                .application_name("Stretch Break")
+                .application_name("Rclone Shuttle")
                 .application_icon(APP_ID)
                 .developer_name("pieterdd")
                 .version(env!("CARGO_PKG_VERSION"))
-                .website("https://github.com/pieterdd/StretchBreak/")
+                .website("https://github.com/pieterdd/RcloneShuttle/")
                 .build();
             dialog.present(Some(&cloned_root));
         });
